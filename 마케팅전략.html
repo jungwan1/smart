@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>정우시스템 — 마케팅 전략</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --paper: #f7f5f0;
+  --teal: #0b6b4e;
+  --teal-light: #e6f4ef;
+  --teal-mid: #1a9a72;
+  --blue: #1a4b8c;
+  --blue-light: #e8f0fb;
+  --amber: #b85c00;
+  --amber-light: #fef3e6;
+  --rule: #dbd8d0;
+  --muted: #7a7570;
+  --card: #ffffff;
+  --danger: #c0392b;
+  --danger-light: #fdf0ee;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--paper); color: var(--ink); font-family: 'Noto Sans KR', sans-serif; font-size: 14px; line-height: 1.7; }
+
+.cover {
+  background: var(--teal);
+  color: white;
+  padding: 64px 56px 52px;
+  position: relative;
+  overflow: hidden;
+}
+.cover::before {
+  content: '';
+  position: absolute;
+  right: -80px; top: -80px;
+  width: 380px; height: 380px;
+  border-radius: 50%;
+  border: 60px solid rgba(255,255,255,0.06);
+}
+.cover::after {
+  content: '';
+  position: absolute;
+  left: 100px; bottom: -70px;
+  width: 240px; height: 240px;
+  border-radius: 50%;
+  border: 40px solid rgba(255,255,255,0.04);
+}
+.cover-eyebrow { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 20px; }
+.cover-title { font-family: 'Noto Serif KR', serif; font-size: 44px; font-weight: 700; line-height: 1.2; margin-bottom: 12px; }
+.cover-sub { font-size: 15px; color: rgba(255,255,255,0.55); margin-bottom: 40px; }
+.cover-badges { display: flex; gap: 10px; flex-wrap: wrap; }
+.badge { padding: 5px 14px; border-radius: 2px; font-size: 12px; font-weight: 500; }
+.badge-white { background: rgba(255,255,255,0.15); color: white; }
+.badge-dark  { background: rgba(0,0,0,0.25); color: white; }
+.cover-date { position: absolute; top: 64px; right: 56px; font-size: 12px; color: rgba(255,255,255,0.35); text-align: right; line-height: 1.6; }
+
+.page { padding: 44px 48px 52px; max-width: 880px; margin: 0 auto; }
+
+.sec-head {
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 14px; margin-top: 40px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--rule);
+}
+.sec-head:first-child { margin-top: 0; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
+.card { background: var(--card); border: 1px solid var(--rule); border-radius: 4px; padding: 18px 18px 16px; }
+.card.teal  { border-left: 3px solid var(--teal); }
+.card.blue  { border-left: 3px solid var(--blue); }
+.card.amber { border-left: 3px solid var(--amber); }
+.card-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.card-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 7px; line-height: 1.4; }
+.card-body  { font-size: 12px; color: var(--muted); line-height: 1.75; }
+
+.tags { margin-top: 9px; display: flex; flex-wrap: wrap; gap: 5px; }
+.tag { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 2px; }
+.tag-teal   { background: var(--teal-light);  color: var(--teal); }
+.tag-blue   { background: var(--blue-light);  color: var(--blue); }
+.tag-amber  { background: var(--amber-light); color: var(--amber); }
+.tag-danger { background: var(--danger-light); color: var(--danger); }
+
+.callout { border-radius: 4px; padding: 13px 16px; font-size: 12px; line-height: 1.8; margin-bottom: 14px; }
+.callout strong { font-weight: 700; }
+.callout.teal  { background: var(--teal-light);  border-left: 3px solid var(--teal);  color: #084035; }
+.callout.amber { background: var(--amber-light); border-left: 3px solid var(--amber); color: #6b3600; }
+
+/* 온오프라인 구분 라벨 */
+.channel-type {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 2px; margin-bottom: 12px;
+}
+.ct-online  { background: var(--teal-light);  color: var(--teal); }
+.ct-offline { background: var(--blue-light);  color: var(--blue); }
+
+/* 우선순위 타임라인 */
+.timeline { margin-bottom: 14px; }
+.tl-row {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 14px 0; border-bottom: 1px solid var(--rule);
+}
+.tl-row:last-child { border-bottom: none; }
+.tl-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+}
+.tl-dot.now   { background: var(--teal);  color: white; }
+.tl-dot.soon  { background: var(--amber-light); color: var(--amber); border: 1px solid var(--amber); }
+.tl-dot.later { background: var(--rule);  color: var(--muted); }
+.tl-content {}
+.tl-when { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+.tl-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.tl-desc  { font-size: 12px; color: var(--muted); line-height: 1.65; }
+
+/* DB 구축 흐름 */
+.flow-wrap { background: var(--card); border: 1px solid var(--rule); border-radius: 4px; padding: 20px; margin-bottom: 14px; }
+.flow-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 16px; }
+.flow-steps { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.fstep {
+  flex: 1; min-width: 90px;
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 4px;
+  padding: 10px; text-align: center;
+}
+.fs-n { font-size: 10px; color: var(--muted); margin-bottom: 3px; }
+.fs-t { font-size: 11px; font-weight: 700; color: var(--ink); line-height: 1.4; }
+.farr { color: var(--muted); font-size: 14px; flex-shrink: 0; }
+
+/* KPI 목표 */
+.kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 14px; }
+.kpi { background: var(--teal-light); border-radius: 4px; padding: 14px; text-align: center; }
+.kv { font-family: 'Noto Serif KR', serif; font-size: 22px; font-weight: 700; color: var(--teal); line-height: 1; margin-bottom: 4px; }
+.kl { font-size: 11px; color: var(--teal); opacity: 0.8; line-height: 1.4; }
+
+.footer {
+  background: var(--teal);
+  color: rgba(255,255,255,0.4);
+  padding: 20px 48px;
+  font-size: 11px;
+  display: flex;
+  justify-content: space-between;
+  letter-spacing: 0.5px;
+  margin-top: 40px;
+}
+
+@media (max-width: 680px) {
+  .grid-2, .grid-3, .kpi-row { grid-template-columns: 1fr; }
+  .cover { padding: 40px 24px 36px; }
+  .cover-date { display: none; }
+  .page { padding: 32px 24px 40px; }
+  .cover-title { font-size: 32px; }
+}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-date">(주)정우시스템<br>2026년 4월</div>
+  <div class="cover-eyebrow">Jungwoo System · Marketing Strategy</div>
+  <div class="cover-title">마케팅 전략</div>
+  <div class="cover-sub">신규 고객 유입 채널 구축 — 온라인 + 오프라인 병행</div>
+  <div class="cover-badges">
+    <span class="badge badge-white">온라인 3채널</span>
+    <span class="badge badge-white">오프라인 5채널</span>
+    <span class="badge badge-dark">4월 즉시 실행</span>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- 목표 지표 -->
+  <div class="sec-head">목표 지표</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kv">15건</div><div class="kl">연간 신규 계약 목표</div></div>
+    <div class="kpi"><div class="kv">50건</div><div class="kl">연간 상담 목표</div></div>
+    <div class="kpi"><div class="kv">30%</div><div class="kl">상담 → 계약 전환율 목표</div></div>
+    <div class="kpi"><div class="kv">자체 DB</div><div class="kl">랜딩페이지 수집</div></div>
+  </div>
+
+  <!-- 온라인 채널 -->
+  <div class="sec-head">온라인 채널</div>
+  <div class="channel-type ct-online">온라인</div>
+  <div class="grid-2" style="margin-bottom:12px;">
+    <div class="card teal">
+      <div class="card-label">현재 운영 중</div>
+      <div class="card-title">메타 광고 (페이스북 · 인스타그램)</div>
+      <div class="card-body">귀농·농업 관심 40~60대 타겟 광고 집행 중. 수확 비주얼 이미지로 클릭 유도 → 랜딩페이지 연결. 50대 이상은 페이스북이 인스타보다 도달률 높음.</div>
+      <div class="tags">
+        <span class="tag tag-teal">현재 운영 중</span>
+        <span class="tag tag-amber">광고비 월 관리 필요</span>
+      </div>
+    </div>
+    <div class="card teal">
+      <div class="card-label">검색 유입</div>
+      <div class="card-title">네이버 블로그 · 귀농 카페</div>
+      <div class="card-body">"참송이 재배", "귀농 스마트팜", "컨테이너 농장" 키워드 SEO 블로그 운영. 회원 10만+ 귀농귀촌 대형 카페에 성공사례 정기 투고.</div>
+      <div class="tags">
+        <span class="tag tag-teal">장기 자산</span>
+        <span class="tag tag-amber">꾸준한 운영 필요</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 오프라인 채널 -->
+  <div class="sec-head">오프라인 채널</div>
+  <div class="channel-type ct-offline">오프라인</div>
+  <div class="grid-2">
+    <div class="card blue" style="border-left-color:var(--teal);border-left-width:3px;">
+      <div class="card-label" style="color:var(--teal);">메인 DB 수집 — 현재 운영 중</div>
+      <div class="card-title">PR 영업 — 영업사원 직접 농가 방문</div>
+      <div class="card-body">영업사원이 직접 농촌 지역 농가를 방문하며 정우시스템을 소개하고 상담 DB를 수집. 현재 가장 많은 계약이 이 채널에서 발생. 대면 신뢰 형성으로 전환율이 높음.</div>
+      <div class="tags">
+        <span class="tag tag-teal">현재 메인 채널</span>
+        <span class="tag tag-teal">계약 전환율 최고</span>
+      </div>
+    </div>
+    <div class="card blue">
+      <div class="card-label">4월 즉시 시작 — 농촌 어르신 타겟</div>
+      <div class="card-title">우편 DM 발송</div>
+      <div class="card-body">정우시스템이 이미지 제작 → 마케팅 대행사가 봉투 삽입·주소 라벨·우편 발송 대행. 인터넷을 잘 못하는 농촌 어르신에게 직접 도달하는 유일한 수단.</div>
+      <div style="margin-top:10px;padding:10px 12px;background:var(--teal-light);border-radius:3px;">
+        <div style="font-size:10px;font-weight:700;color:var(--teal);margin-bottom:4px;">예상 비용 (1,000건 기준)</div>
+        <div style="font-size:12px;color:#084035;line-height:1.8;">
+          인쇄물 제작: 건당 약 100~150원<br>
+          봉투 삽입·라벨 작업: 건당 약 100~200원<br>
+          우편 발송료: 건당 약 380~500원<br>
+          <strong>총합: 건당 약 600~850원 / 1,000건 약 60~85만원</strong>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag tag-blue">4월 실행</span>
+        <span class="tag tag-teal">농촌 어르신 도달</span>
+      </div>
+    </div>
+    <div class="card blue">
+      <div class="card-label">4월 즉시 시작 — 지역 노출</div>
+      <div class="card-title">현수막 광고</div>
+      <div class="card-body">연천·파주·충청 주요 농촌 지역 도로변·마을 입구 등 거점에 설치. 귀농 관심 지역민 및 지나가는 차량 노출. 이미지 제작 후 승인 현수막 게시.</div>
+      <div style="margin-top:10px;padding:10px 12px;background:var(--blue-light);border-radius:3px;">
+        <div style="font-size:10px;font-weight:700;color:var(--blue);margin-bottom:4px;">예상 비용</div>
+        <div style="font-size:12px;color:#0d2d5a;line-height:1.8;">
+          현수막 제작: 500×90cm 기준 장당 약 3~5만원<br>
+          디자인비: 5~10만원 (첫 제작 시)<br>
+          설치비: 장당 약 2~5만원 (위치별 상이)<br>
+          <strong>총합: 장당 약 5~10만원 / 5장 설치 시 약 25~50만원</strong>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag tag-blue">4월 실행</span>
+        <span class="tag tag-amber">승인 현수막 필수</span>
+      </div>
+    </div>
+    <div class="card blue">
+      <div class="card-label">상담 요청 고객 대상</div>
+      <div class="card-title">현장 견학 (상담 연계)</div>
+      <div class="card-body">따로 공개 모집하지 않고, 상담 문의가 온 고객을 연천 재배사로 초청. 실제 수확·수매 현장을 직접 보여주며 신뢰 형성. 계약 전환율이 가장 높은 단계.</div>
+      <div class="tags">
+        <span class="tag tag-teal">전환율 최고</span>
+        <span class="tag tag-blue">비용 없음</span>
+      </div>
+    </div>
+    <div class="card blue">
+      <div class="card-label">고품질 리드</div>
+      <div class="card-title">귀농 박람회 · 농업기술센터 연계</div>
+      <div class="card-body">서울귀농귀촌박람회(코엑스) 등 전국 박람회 부스 참가. 시군 농업기술센터 교육생 대상 설명회 강사 초청. 이미 귀농을 결심한 고품질 리드와 직접 접촉.</div>
+      <div class="tags">
+        <span class="tag tag-blue">집중 노출</span>
+      </div>
+    </div>
+    <div class="card blue">
+      <div class="card-label">신뢰 레버리지</div>
+      <div class="card-title">기존 고객 소개 + 농협·지자체 파트너십</div>
+      <div class="card-body">계약 성사 시 소개 고객 인센티브 지급. 지역 농협 설명회 협조 요청. 지자체 귀농 담당 공무원 관계 형성 → 공식 추천 업체 등록.</div>
+      <div class="tags">
+        <span class="tag tag-amber">저비용 고효율</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 실행 타임라인 -->
+  <div class="sec-head">실행 우선순위 — 4월부터</div>
+  <div class="timeline">
+    <div class="tl-row">
+      <div class="tl-dot now">1</div>
+      <div class="tl-content">
+        <div class="tl-when">4월 즉시</div>
+        <div class="tl-title">현수막 + 우편 DM 동시 실행</div>
+        <div class="tl-desc">현수막 디자인 제작 후 연천·파주·충청 거점 5~10곳 설치. 우편 DM 이미지 제작 후 대행사에 1,000건 발송 의뢰. 두 채널 모두 전화번호·카카오 채널 연락처 크게 표기.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-dot now">2</div>
+      <div class="tl-content">
+        <div class="tl-when">4월 동시 진행</div>
+        <div class="tl-title">메타 광고 소재 개선</div>
+        <div class="tl-desc">기존 메타 광고 소재 검토·개선. 현수막·우편 DM과 동일 메시지로 통일. PR 영업 방문 시 활용할 브로셔·명함 정비.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-dot soon">3</div>
+      <div class="tl-content">
+        <div class="tl-when">1~2개월 내</div>
+        <div class="tl-title">블로그 SEO + 귀농 카페 투고</div>
+        <div class="tl-desc">"참송이버섯 스마트팜 창업 후기", "귀농 첫 달 수매 정산 공개" 등 키워드 블로그 10편 작성. 대형 귀농 카페 2~3곳 성공사례 투고.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-dot soon">4</div>
+      <div class="tl-content">
+        <div class="tl-when">2~3개월 내</div>
+        <div class="tl-title">귀농 박람회 부스 신청 + 농협 설명회</div>
+        <div class="tl-desc">하반기 주요 귀농박람회 부스 선착순 신청. 관할 농협 방문해 조합원 대상 설명회 협조 요청.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout amber">
+    <strong>핵심 메시지 — 모든 채널에 일관되게.</strong> "좋은 버섯 많이 생산만 해주세요. 나머지는 정우시스템이 ONE-STOP으로 진행해 드립니다." 수매 걱정 없는 안정 수익 구조가 가장 강력한 차별화 포인트입니다.
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>(주)정우시스템 · 대표 한종욱 · 1800-6442 · jungwoosystem.co.kr</span>
+  <span>경기도 파주시 중앙로 191, 2층 · 2026.04</span>
+</div>
+
+</body>
+</html>

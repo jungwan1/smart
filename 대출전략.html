@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>정우시스템 — 대출 전략</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --paper: #f7f5f0;
+  --teal: #0b6b4e;
+  --teal-light: #e6f4ef;
+  --teal-mid: #1a9a72;
+  --blue: #1a4b8c;
+  --blue-light: #e8f0fb;
+  --amber: #b85c00;
+  --amber-light: #fef3e6;
+  --rule: #dbd8d0;
+  --muted: #7a7570;
+  --card: #ffffff;
+  --danger: #c0392b;
+  --danger-light: #fdf0ee;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--paper); color: var(--ink); font-family: 'Noto Sans KR', sans-serif; font-size: 14px; line-height: 1.7; }
+
+.cover { background: var(--ink); color: white; padding: 64px 56px 52px; position: relative; overflow: hidden; }
+.cover::before { content:''; position:absolute; right:-80px; top:-80px; width:380px; height:380px; border-radius:50%; border:60px solid rgba(255,255,255,0.04); }
+.cover::after  { content:''; position:absolute; left:100px; bottom:-70px; width:240px; height:240px; border-radius:50%; border:40px solid rgba(255,255,255,0.03); }
+.cover-eyebrow { font-size:10px; letter-spacing:4px; text-transform:uppercase; color:rgba(255,255,255,0.4); margin-bottom:20px; }
+.cover-title   { font-family:'Noto Serif KR',serif; font-size:44px; font-weight:700; line-height:1.2; margin-bottom:12px; }
+.cover-sub     { font-size:15px; color:rgba(255,255,255,0.5); margin-bottom:40px; }
+.cover-badges  { display:flex; gap:10px; flex-wrap:wrap; }
+.badge         { padding:5px 14px; border-radius:2px; font-size:12px; font-weight:500; }
+.badge-amber   { background:var(--amber); color:white; }
+.badge-teal    { background:var(--teal);  color:white; }
+.badge-blue    { background:var(--blue);  color:white; }
+.badge-dark    { background:rgba(255,255,255,0.15); color:white; }
+.cover-date    { position:absolute; top:64px; right:56px; font-size:12px; color:rgba(255,255,255,0.3); text-align:right; line-height:1.6; }
+
+.page { padding:44px 48px 52px; max-width:880px; margin:0 auto; }
+
+.sec-head { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-bottom:14px; margin-top:40px; padding-bottom:8px; border-bottom:1px solid var(--rule); }
+.sec-head:first-child { margin-top:0; }
+
+.callout { border-radius:4px; padding:13px 16px; font-size:12px; line-height:1.8; margin-bottom:14px; }
+.callout strong { font-weight:700; }
+.callout.teal   { background:var(--teal-light);  border-left:3px solid var(--teal);  color:#084035; }
+.callout.amber  { background:var(--amber-light); border-left:3px solid var(--amber); color:#6b3600; }
+.callout.danger { background:var(--danger-light);border-left:3px solid var(--danger);color:#7a1f17; }
+
+/* LOAN CARDS */
+.loan-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:14px; }
+.loan-card { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+.loan-card.featured { border:2px solid var(--teal); }
+.loan-head { padding:12px 15px; }
+.lh-amber { background:var(--amber-light); }
+.lh-teal  { background:var(--teal-light); }
+.lh-blue  { background:var(--blue-light); }
+.loan-head-label { font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:3px; }
+.lh-amber .loan-head-label { color:var(--amber); }
+.lh-teal  .loan-head-label { color:var(--teal); }
+.lh-blue  .loan-head-label { color:var(--blue); }
+.loan-head-title { font-size:14px; font-weight:700; line-height:1.3; }
+.lh-amber .loan-head-title { color:#6b3600; }
+.lh-teal  .loan-head-title { color:#084035; }
+.lh-blue  .loan-head-title { color:#0d2d5a; }
+.loan-body { padding:14px 15px; background:white; }
+.loan-amount { font-family:'Noto Serif KR',serif; font-size:26px; font-weight:700; color:var(--ink); line-height:1; margin-bottom:2px; }
+.loan-amount-sub { font-size:11px; color:var(--muted); margin-bottom:12px; }
+.detail-row { display:flex; justify-content:space-between; align-items:baseline; padding:5px 0; border-bottom:1px solid var(--rule); font-size:12px; gap:8px; }
+.detail-row:last-of-type { border-bottom:none; }
+.dk { color:var(--muted); flex-shrink:0; }
+.dv { font-weight:700; text-align:right; }
+.dv.teal { color:var(--teal); } .dv.blue { color:var(--blue); } .dv.amber { color:var(--amber); } .dv.ok { color:#228b22; } .dv.warn { color:var(--danger); }
+.tags { margin-top:9px; display:flex; flex-wrap:wrap; gap:5px; }
+.tag { font-size:10px; font-weight:500; padding:2px 8px; border-radius:2px; }
+.tag-teal   { background:var(--teal-light);  color:var(--teal); }
+.tag-blue   { background:var(--blue-light);  color:var(--blue); }
+.tag-amber  { background:var(--amber-light); color:var(--amber); }
+.tag-danger { background:var(--danger-light);color:var(--danger); }
+.loan-note { margin-top:10px; padding:8px 10px; background:var(--danger-light); border-radius:3px; font-size:11px; color:var(--danger); line-height:1.6; }
+.loan-note strong { font-weight:700; }
+
+/* BRANCH */
+.branch-wrap { border:1px solid var(--rule); border-radius:4px; overflow:hidden; margin-bottom:14px; }
+.branch-head { background:var(--ink); color:white; padding:12px 18px; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
+.branch-body { padding:16px 18px; background:var(--card); }
+.branch-rule { font-size:12px; color:var(--muted); margin-bottom:14px; line-height:1.8; }
+.branch-rule strong { color:var(--ink); font-weight:700; }
+.branch-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.branch-card { border-radius:4px; padding:14px; border:1px solid var(--rule); }
+.branch-card.teal-card  { background:var(--teal-light);  border-color:#80c4a8; }
+.branch-card.amber-card { background:var(--amber-light); border-color:#e8a060; }
+.bc-badge { display:inline-block; font-size:10px; font-weight:700; padding:2px 9px; border-radius:2px; margin-bottom:8px; }
+.teal-card .bc-badge  { background:var(--teal);  color:white; }
+.amber-card .bc-badge { background:var(--amber); color:white; }
+.bc-title { font-size:13px; font-weight:700; margin-bottom:5px; }
+.teal-card  .bc-title { color:#084035; }
+.amber-card .bc-title { color:#6b3600; }
+.bc-body { font-size:12px; line-height:1.7; }
+.teal-card  .bc-body { color:#084035; }
+.amber-card .bc-body { color:#6b3600; }
+.bc-merit { font-size:11px; font-weight:700; margin-top:8px; padding-top:8px; border-top:1px solid rgba(0,0,0,0.08); }
+.teal-card  .bc-merit { color:var(--teal); }
+.amber-card .bc-merit { color:var(--amber); }
+
+/* CMP TABLE */
+.cmp-tbl { width:100%; border-collapse:collapse; font-size:12px; margin-bottom:14px; }
+.cmp-tbl th { background:var(--ink); color:white; padding:8px 12px; text-align:left; font-size:11px; font-weight:700; }
+.cmp-tbl td { padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top; }
+.cmp-tbl tr:last-child td { border-bottom:none; }
+.cmp-tbl .tl { color:var(--teal); font-weight:700; }
+.cmp-tbl .am { color:var(--amber); font-weight:700; }
+.cmp-tbl .rd { color:var(--danger); font-weight:700; }
+.cmp-tbl .center { text-align:center; }
+
+/* SIMULATOR */
+.sim-wrap { background:var(--card); border:1px solid var(--rule); border-radius:4px; padding:24px; margin-bottom:14px; }
+.sim-title { font-size:14px; font-weight:700; color:var(--ink); margin-bottom:4px; }
+.sim-sub   { font-size:12px; color:var(--muted); margin-bottom:20px; }
+.sim-section { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--muted); padding:10px 0 6px; margin-top:8px; border-top:1px solid var(--rule); }
+.ctrl-row  { display:flex; align-items:center; gap:12px; margin-bottom:13px; }
+.ctrl-label{ font-size:12px; color:var(--muted); min-width:110px; }
+.ctrl-val  { font-size:13px; font-weight:700; color:var(--ink); min-width:80px; text-align:right; }
+input[type=range] { flex:1; -webkit-appearance:none; appearance:none; height:4px; background:var(--rule); border-radius:2px; outline:none; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--teal); cursor:pointer; }
+input[type=range]::-moz-range-thumb     { width:16px; height:16px; border-radius:50%; background:var(--teal); cursor:pointer; border:none; }
+.result-g3 { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:12px; }
+.result-g4 { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:12px; }
+.rcard { background:var(--paper); border-radius:4px; padding:12px 14px; border:1px solid var(--rule); }
+.rv       { font-family:'Noto Serif KR',serif; font-size:20px; font-weight:700; color:var(--ink); line-height:1; margin-bottom:4px; }
+.rv.teal  { color:var(--teal); }
+.rv.red   { color:var(--danger); }
+.rv.amb   { color:var(--amber); }
+.rl       { font-size:11px; color:var(--muted); }
+.progress-wrap   { margin-top:18px; }
+.progress-bar    { height:5px; background:var(--rule); border-radius:3px; overflow:hidden; }
+.progress-fill   { height:100%; background:var(--teal-mid); border-radius:3px; transition:width 0.35s ease; }
+.progress-labels { display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-top:5px; }
+.annual-box   { margin-top:16px; background:var(--teal-light); border-radius:4px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; }
+.annual-label { font-size:12px; color:var(--teal); font-weight:700; }
+.annual-sub   { font-size:11px; color:var(--teal); opacity:.75; margin-top:2px; }
+.annual-val   { font-family:'Noto Serif KR',serif; font-size:28px; font-weight:700; color:var(--teal); }
+.highlight-box { margin-top:14px; background:var(--paper); border:1px solid var(--rule); border-radius:4px; padding:13px 16px; font-size:12px; line-height:1.8; color:var(--muted); }
+.highlight-box strong { color:var(--ink); font-weight:700; }
+
+/* SCENARIO */
+.sc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
+.sc { background:var(--card); border:1px solid var(--rule); border-radius:4px; padding:16px; }
+.sc-title { font-size:13px; font-weight:700; color:var(--ink); margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--rule); }
+.sc-row { display:flex; justify-content:space-between; font-size:12px; padding:4px 0; }
+.sc-k { color:var(--muted); }
+.sc-v { font-weight:700; }
+.sc-total { display:flex; justify-content:space-between; font-size:14px; font-weight:700; padding:8px 0 0; margin-top:6px; border-top:1px solid var(--rule); }
+.sc-note { font-size:11px; color:var(--muted); margin-top:8px; line-height:1.6; padding-top:8px; border-top:1px solid var(--rule); }
+
+/* PREREQ & CHECK */
+.pre-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+.pre { background:var(--paper); border:1px solid var(--rule); border-radius:4px; padding:14px; }
+.pre-n { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:5px; }
+.pre-t { font-size:12px; font-weight:700; color:var(--ink); margin-bottom:4px; }
+.pre-b { font-size:11px; color:var(--muted); line-height:1.65; }
+.check-list  { background:var(--card); border:1px solid var(--rule); border-radius:4px; padding:20px; margin-bottom:14px; }
+.check-title { font-size:13px; font-weight:700; color:var(--ink); margin-bottom:14px; }
+.check-grid  { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+.check-item  { padding:12px 14px; border-radius:4px; border:1px solid var(--rule); }
+.ci-label    { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:5px; }
+.ci-q        { font-size:12px; font-weight:700; color:var(--ink); margin-bottom:4px; }
+.ci-pass     { font-size:11px; color:var(--teal); line-height:1.5; }
+.ci-fail     { font-size:11px; color:var(--danger); line-height:1.5; }
+.check-item.amber-bg { background:var(--amber-light); border-color:#e8a060; }
+.check-item.amber-bg .ci-label { color:var(--amber); }
+.check-item.blue-bg  { background:var(--blue-light);  border-color:#a0b8e0; }
+.check-item.blue-bg  .ci-label { color:var(--blue); }
+.check-item.teal-bg  { background:var(--teal-light);  border-color:#80c4a8; }
+.check-item.teal-bg  .ci-label { color:var(--teal); }
+
+.footer { background:var(--ink); color:rgba(255,255,255,0.3); padding:20px 48px; font-size:11px; display:flex; justify-content:space-between; letter-spacing:0.5px; margin-top:40px; }
+
+@media (max-width:680px) {
+  .loan-grid,.sc-grid,.pre-grid,.result-g3,.result-g4,.check-grid,.branch-grid { grid-template-columns:1fr; }
+  .cover { padding:40px 24px 36px; } .cover-date { display:none; }
+  .page { padding:32px 24px 40px; } .cover-title { font-size:32px; }
+}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-date">(주)정우시스템<br>2026년 4월</div>
+  <div class="cover-eyebrow">Jungwoo System · Loan Strategy</div>
+  <div class="cover-title">대출 전략</div>
+  <div class="cover-sub">3가지 정책대출 + 캐피탈 이자지원 + 수매담보대출 통합 시뮬레이터</div>
+  <div class="cover-badges">
+    <span class="badge badge-amber">① 농신보</span>
+    <span class="badge badge-teal">② 농기계 대출</span>
+    <span class="badge badge-blue">③ 청창농</span>
+    <span class="badge badge-dark">+ 캐피탈 이자지원</span>
+    <span class="badge badge-dark">+ 렌탈사 대출</span>
+    <span class="badge badge-dark">+ 수매담보대출</span>
+    <span class="badge badge-dark">+ 부동산 담보대출</span>
+  </div>
+</div>
+
+<div class="page">
+
+  <div style="background:var(--card);border:1px solid var(--rule);border-radius:4px;overflow:hidden;margin-bottom:14px;">
+    <div style="background:var(--ink);color:white;padding:10px 16px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">부족분 조달 우선순위 — 한눈에 보기</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;">
+      <div style="padding:14px 16px;border-right:1px solid var(--rule);background:var(--teal-light);">
+        <div style="font-size:10px;font-weight:700;color:var(--teal);letter-spacing:1px;margin-bottom:6px;">① 최우선</div>
+        <div style="font-size:13px;font-weight:700;color:#084035;margin-bottom:4px;">부동산 담보대출</div>
+        <div style="font-size:11px;color:#084035;line-height:1.6;">토지·주택 보유 시<br>연 3~5% 저금리<br>신용 관계없음</div>
+      </div>
+      <div style="padding:14px 16px;border-right:1px solid var(--rule);background:#f0f4ff;">
+        <div style="font-size:10px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:6px;">② 즉시 필요 시</div>
+        <div style="font-size:13px;font-weight:700;color:#0d2d5a;margin-bottom:4px;">렌탈사 대출 <span style="font-size:10px;font-weight:400;color:var(--danger);">예정</span></div>
+        <div style="font-size:11px;color:#0d2d5a;line-height:1.6;">제휴 후 즉시 실행<br>고객 금리 17%<br>이자지원 동일 조건</div>
+      </div>
+      <div style="padding:14px 16px;border-right:1px solid var(--rule);background:var(--teal-light);">
+        <div style="font-size:10px;font-weight:700;color:var(--teal);letter-spacing:1px;margin-bottom:6px;">③ 신용 좋을 때</div>
+        <div style="font-size:13px;font-weight:700;color:#084035;margin-bottom:4px;">캐피탈 + 이자지원</div>
+        <div style="font-size:11px;color:#084035;line-height:1.6;">신용 850점 이상<br>금리 연 15~20%<br>회사 선지급 없음</div>
+      </div>
+      <div style="padding:14px 16px;background:var(--amber-light);">
+        <div style="font-size:10px;font-weight:700;color:var(--amber);letter-spacing:1px;margin-bottom:6px;">④ 신용 부족 시</div>
+        <div style="font-size:13px;font-weight:700;color:#6b3600;margin-bottom:4px;">수매담보대출</div>
+        <div style="font-size:11px;color:#6b3600;line-height:1.6;">최대 3,000만원<br>수매대금 50% 차감<br>회사 선지급 발생</div>
+      </div>
+    </div>
+    <div style="padding:10px 16px;background:var(--paper);border-top:1px solid var(--rule);font-size:11px;color:var(--muted);">
+      메인 대출(농신보·농기계·청창농)은 동시 수령 불가 — 셋 중 하나 선택. 부족분은 위 순서대로 적용. <strong style="color:var(--ink);">동시 진행 가능.</strong>
+    </div>
+  </div>
+
+  <div class="sec-head">STEP 1 — 3가지 정책 대출 (메인) 비교</div>
+  <div class="loan-grid">
+    <div class="loan-card">
+      <div class="loan-head lh-amber">
+        <div class="loan-head-label">① 기존 영업 방법</div>
+        <div class="loan-head-title">농신보 보증 대출</div>
+      </div>
+      <div class="loan-body">
+        <div class="loan-amount">한도 협의</div>
+        <div class="loan-amount-sub">신용·보증비율에 따라 결정</div>
+        <div class="detail-row"><span class="dk">금리</span><span class="dv amber">연 3~4%대</span></div>
+        <div class="detail-row"><span class="dk">상환기간</span><span class="dv">5~10년</span></div>
+        <div class="detail-row"><span class="dk">담보</span><span class="dv">농신보 보증</span></div>
+        <div class="detail-row"><span class="dk">나이 제한</span><span class="dv warn">75세 이하</span></div>
+        <div class="detail-row"><span class="dk">신용 조건</span><span class="dv warn">신용점수 850점 이상</span></div>
+        <div class="detail-row"><span class="dk">시기</span><span class="dv ok">즉시 가능</span></div>
+        <div class="tags"><span class="tag tag-amber">현재 운영 중</span><span class="tag tag-danger">신용 850점↑ 필수</span></div>
+      </div>
+    </div>
+    <div class="loan-card featured">
+      <div class="loan-head lh-teal">
+        <div class="loan-head-label">② 신규 핵심 — 6월 이후</div>
+        <div class="loan-head-title">농기계 구입자금</div>
+      </div>
+      <div class="loan-body">
+        <div class="loan-amount">5,400만원</div>
+        <div class="loan-amount-sub">정우시스템 기종 등록 후 한도</div>
+        <div class="detail-row"><span class="dk">금리</span><span class="dv teal">연 2.0% 고정</span></div>
+        <div class="detail-row"><span class="dk">거치·상환</span><span class="dv">1년 거치 + 5~7년</span></div>
+        <div class="detail-row"><span class="dk">담보</span><span class="dv teal">농기계 자체 담보</span></div>
+        <div class="detail-row"><span class="dk">나이 제한</span><span class="dv ok">없음</span></div>
+        <div class="detail-row"><span class="dk">신용 조건</span><span class="dv ok">없음 (기계 담보)</span></div>
+        <div class="detail-row"><span class="dk">시기</span><span class="dv warn">2026년 6월 이후</span></div>
+        <div class="tags"><span class="tag tag-teal">담보 불필요</span><span class="tag tag-teal">누구나 가능</span></div>
+      </div>
+    </div>
+    <div class="loan-card">
+      <div class="loan-head lh-blue">
+        <div class="loan-head-label">③ 청년 전용</div>
+        <div class="loan-head-title">청년창업농 육성자금</div>
+      </div>
+      <div class="loan-body">
+        <div class="loan-amount">최대 5억</div>
+        <div class="loan-amount-sub">실 승인 약 2,000~3,000만원</div>
+        <div class="detail-row"><span class="dk">금리</span><span class="dv blue">연 1.5% 고정</span></div>
+        <div class="detail-row"><span class="dk">거치·상환</span><span class="dv">5년 거치 + 20년</span></div>
+        <div class="detail-row"><span class="dk">담보</span><span class="dv warn">감정평가 기준</span></div>
+        <div class="detail-row"><span class="dk">나이 제한</span><span class="dv warn">만 40세 미만</span></div>
+        <div class="detail-row"><span class="dk">교육 조건</span><span class="dv warn">지정 교육 이수 필수</span></div>
+        <div class="detail-row"><span class="dk">시기</span><span class="dv ok">즉시 가능 (선발 후)</span></div>
+        <div class="tags"><span class="tag tag-blue">최저 금리</span><span class="tag tag-blue">초장기 상환</span><span class="tag tag-danger">교육 이수 필수</span></div>
+        <div class="loan-note"><strong>한도가 낮은 이유.</strong> 컨테이너 스마트팜 감정평가액이 2,000~3,000만원 수준으로 낮게 책정되어 대출 한도가 이에 연동됨.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-head">STEP 2 — 부족분 보완 방법 (우선순위 적용)</div>
+  <div class="branch-wrap">
+    <div class="branch-head">부족분 처리 원칙 — 신용도에 따라 순서 결정 · 동시 진행 가능</div>
+    <div class="branch-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div class="branch-card teal-card">
+          <span class="bc-badge">① 우선 — 신용 좋을 때</span>
+          <div class="bc-title">캐피탈 신용대출 + 이자지원</div>
+          <div class="bc-body">고객이 직접 캐피탈 대출 → 정우시스템이 1년차 이자 50%, 2년차 30% 지원. 선지급 없이 매월 소액만 지원. 금리 연 15~20% 수준.</div>
+          <div class="bc-merit">회사 현금 부담 최소 — 월별 소액 분산</div>
+        </div>
+        <div class="branch-card teal-card">
+          <span class="bc-badge">① 우선 — 즉시 필요할 때 <span style="font-weight:400;opacity:0.8;">(예정)</span></span>
+          <div class="bc-title">렌탈사 대출 + 이자지원</div>
+          <div class="bc-body">제휴 렌탈사 통해 즉시 대출 가능 (제휴 협의 중). 고객 금리 17%, 이자지원 동일 조건(1년차 50%, 2년차 30%). 렌탈사 협상 예상 금리 24%.</div>
+          <div class="bc-merit" style="color:var(--danger);font-size:11px;font-weight:700;margin-top:8px;padding-top:8px;border-top:1px solid rgba(0,0,0,0.08);">⚠ 조기상환 수수료 높음 — 단기 상환 시 주의</div>
+        </div>
+        <div class="branch-card amber-card">
+          <span class="bc-badge">② 차선 — 신용 부족할 때</span>
+          <div class="bc-title">수매담보대출 (최대 3,000만원)</div>
+          <div class="bc-body">정우시스템이 직접 선지급 → 월 수매대금 50% 차감 회수. 대출 불가하거나 한도 부족 시 사용.</div>
+          <div class="bc-merit">회사 선지급 발생 — 회수까지 자금 묶임 주의</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-head">부동산 보유 고객 전용 — 담보대출 활용</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;">
+    <div class="loan-card">
+      <div class="loan-head" style="background:#f0f4ff;">
+        <div class="loan-head-label" style="color:#1a4b8c;">은행 부동산 담보대출</div>
+        <div class="loan-head-title" style="color:#0d2d5a;">주택 · 건물 담보</div>
+      </div>
+      <div class="loan-body">
+        <div class="loan-amount">감정가 60~70%</div>
+        <div class="loan-amount-sub">KB시세 또는 감정가 기준</div>
+        <div class="detail-row"><span class="dk">금리</span><span class="dv teal">연 3~5%대</span></div>
+        <div class="detail-row"><span class="dk">상환기간</span><span class="dv">10~30년</span></div>
+        <div class="detail-row"><span class="dk">담보</span><span class="dv teal">주택·건물 근저당</span></div>
+        <div class="detail-row"><span class="dk">신용 조건</span><span class="dv ok">담보 있으면 완화</span></div>
+        <div class="detail-row"><span class="dk">나이 제한</span><span class="dv ok">거의 없음</span></div>
+        <div class="detail-row"><span class="dk">취급 기관</span><span class="dv">시중은행·저축은행</span></div>
+        <div class="tags"><span class="tag tag-teal">저금리</span><span class="tag tag-teal">대한도</span></div>
+      </div>
+    </div>
+    <div class="loan-card">
+      <div class="loan-head" style="background:#f0f4ff;">
+        <div class="loan-head-label" style="color:#1a4b8c;">농협 농지 담보대출</div>
+        <div class="loan-head-title" style="color:#0d2d5a;">농지 · 임야 담보</div>
+      </div>
+      <div class="loan-body">
+        <div class="loan-amount">감정가 70~80%</div>
+        <div class="loan-amount-sub">농지는 농협이 가장 유리</div>
+        <div class="detail-row"><span class="dk">금리</span><span class="dv teal">연 3~4%대</span></div>
+        <div class="detail-row"><span class="dk">상환기간</span><span class="dv">10~20년</span></div>
+        <div class="detail-row"><span class="dk">담보</span><span class="dv teal">농지·임야 근저당</span></div>
+        <div class="detail-row"><span class="dk">신용 조건</span><span class="dv ok">담보 있으면 완화</span></div>
+        <div class="detail-row"><span class="dk">나이 제한</span><span class="dv ok">거의 없음</span></div>
+        <div class="detail-row"><span class="dk">취급 기관</span><span class="dv">농협은행·지역농협</span></div>
+        <div class="tags"><span class="tag tag-teal">농지 특화</span><span class="tag tag-teal">농협 취급</span></div>
+      </div>
+    </div>
+    <div class="loan-card">
+      <div class="loan-head" style="background:#fdf0ee;">
+        <div class="loan-head-label" style="color:var(--danger);">주의 사항</div>
+        <div class="loan-head-title" style="color:#7a1f17;">확인 필수 항목</div>
+      </div>
+      <div class="loan-body">
+        <div class="loan-amount" style="font-size:18px;color:var(--danger);">사전 확인 필요</div>
+        <div class="loan-amount-sub">아래 항목 반드시 확인</div>
+        <div class="detail-row"><span class="dk">기존 담보 여부</span><span class="dv warn">선순위 근저당 확인</span></div>
+        <div class="detail-row"><span class="dk">등기 비용</span><span class="dv warn">설정비 별도 발생</span></div>
+        <div class="detail-row"><span class="dk">공동명의</span><span class="dv warn">가족 동의 필요 가능</span></div>
+        <div class="detail-row"><span class="dk">DSR 규제</span><span class="dv warn">기존 대출 합산 심사</span></div>
+        <div class="detail-row"><span class="dk">감정가 차이</span><span class="dv warn">시세 vs 감정가 확인</span></div>
+        <div class="tags"><span class="tag tag-danger">등기비 발생</span><span class="tag tag-danger">DSR 합산</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:18px;margin-bottom:14px;">
+    <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px;">담보대출 활용 방법 — 두 가지</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div style="background:var(--teal-light);border-radius:4px;padding:14px;border-left:3px solid var(--teal);">
+        <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:8px;">A. 처음부터 담보대출로 시작</div>
+        <div style="font-size:12px;color:#084035;line-height:1.8;">농신보·청창농 조건이 안 되거나 신용이 낮아도 괜찮습니다. 내 땅이나 집을 담보로 건축비 대부분을 낮은 금리(연 3~5%)로 빌리는 방식입니다. 모자라는 금액만 캐피탈이나 수매담보대출로 채우면 됩니다.</div>
+      </div>
+      <div style="background:var(--teal-light);border-radius:4px;padding:14px;border-left:3px solid var(--teal);">
+        <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:8px;">B. 정책대출 받은 후 부족분만 담보대출로</div>
+        <div style="font-size:12px;color:#084035;line-height:1.8;">농신보·농기계 대출로 메인을 받고, 부족한 금액을 캐피탈(연 15~20%) 대신 담보대출(연 3~5%)로 채웁니다. 이자지원 없이도 훨씬 저렴하게 조달할 수 있어 정우시스템 이자지원 비용도 아낄 수 있습니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-head">캐피탈 · 렌탈사 · 수매담보대출 — 회사 관점 현금 부담 비교</div>
+  <table class="cmp-tbl">
+    <tr>
+      <th style="width:20%;">구분</th>
+      <th style="width:27%;">캐피탈 이자지원</th>
+      <th style="width:27%;">렌탈사 이자지원 <span style="font-weight:400;font-size:10px;">(예정)</span></th>
+      <th style="width:26%;">수매담보대출</th>
+    </tr>
+    <tr>
+      <td>고객 금리</td>
+      <td class="tl">연 15~20%</td>
+      <td class="tl">연 17% (협상)</td>
+      <td>해당없음</td>
+    </tr>
+    <tr>
+      <td>렌탈사/캐피탈 금리</td>
+      <td>연 15~20%</td>
+      <td class="am">연 24% 예상 (협상 중)</td>
+      <td>해당없음</td>
+    </tr>
+    <tr>
+      <td>회사 선지급</td>
+      <td class="tl">없음</td>
+      <td class="tl">없음</td>
+      <td class="rd">최대 3,000만원</td>
+    </tr>
+    <tr>
+      <td>즉시 대출 가능</td>
+      <td class="am">심사 필요 (수일 소요)</td>
+      <td class="tl">즉시 가능 (제휴)</td>
+      <td class="tl">즉시 가능</td>
+    </tr>
+    <tr>
+      <td>조기상환 수수료</td>
+      <td class="tl">일반 수준</td>
+      <td class="rd">높음 — 단기 상환 시 주의</td>
+      <td class="tl">없음 (수매 차감)</td>
+    </tr>
+    <tr>
+      <td>2년 총 회사 비용</td>
+      <td class="tl">이자지원금만 (소액)</td>
+      <td class="tl">이자지원금만 (소액)</td>
+      <td class="am">선지급 원금 + 기회비용</td>
+    </tr>
+    <tr>
+      <td>적합한 고객</td>
+      <td>신용 850점↑</td>
+      <td>즉시 자금 필요 고객</td>
+      <td>신용 부족 고객</td>
+    </tr>
+  </table>
+
+  <div class="sec-head">통합 시뮬레이터 — 캐피탈 이자지원 + 수매담보대출 동시 계산</div>
+  <div class="sim-wrap">
+    <div class="sim-title">캐피탈 대출 · 수매담보대출 동시 진행 시 고객 부담과 회사 지출 계산</div>
+    <div class="sim-sub">수매담보대출을 0으로 내리면 캐피탈 이자지원만, 캐피탈 금액을 0으로 내리면 수매담보대출만 계산됩니다</div>
+
+    <div class="ctrl-row">
+      <span class="ctrl-label">캐피탈 대출금액</span>
+      <input type="range" min="0" max="5000" step="100" value="2000" id="capAmt" oninput="calcAll()">
+      <span class="ctrl-val" id="capAmtOut">2,000만원</span>
+    </div>
+    <div class="ctrl-row">
+      <span class="ctrl-label">캐피탈 금리</span>
+      <input type="range" min="10" max="20" step="0.5" value="17" id="capRate" oninput="calcAll()">
+      <span class="ctrl-val" id="capRateOut">연 17%</span>
+    </div>
+    <div class="ctrl-row">
+      <span class="ctrl-label">수매담보대출</span>
+      <input type="range" min="0" max="3000" step="100" value="1000" id="sureAmt" oninput="calcAll()">
+      <span class="ctrl-val" id="sureAmtOut">1,000만원</span>
+    </div>
+    <div class="ctrl-row">
+      <span class="ctrl-label">월 수매대금</span>
+      <input type="range" min="200" max="600" step="10" value="385" id="monthlyAmt" oninput="calcAll()">
+      <span class="ctrl-val" id="monthlyAmtOut">385만원</span>
+    </div>
+
+    <div class="sim-section">고객 부담</div>
+    <div class="result-g4">
+      <div class="rcard"><div class="rl">1년차 월 이자 (고객)</div><div class="rv amb" id="rY1Cust">14만원</div></div>
+      <div class="rcard"><div class="rl">2년차 월 이자 (고객)</div><div class="rv amb" id="rY2Cust">20만원</div></div>
+      <div class="rcard"><div class="rl">수매 차감 50%</div><div class="rv red" id="rRepay">193만원</div></div>
+      <div class="rcard"><div class="rl">1년차 월 실수령</div><div class="rv teal" id="rNetReceive">178만원</div></div>
+    </div>
+
+    <div class="sim-section">회사 지출</div>
+    <div class="result-g4">
+      <div class="rcard"><div class="rl">1년차 이자지원 (월)</div><div class="rv red" id="rSupportY1">14만원</div></div>
+      <div class="rcard"><div class="rl">2년차 이자지원 (월)</div><div class="rv red" id="rSupportY2">9만원</div></div>
+      <div class="rcard"><div class="rl">2년 총 이자지원</div><div class="rv red" id="rSupport2yr">277만원</div></div>
+      <div class="rcard"><div class="rl">수매담보 선지급 (총)</div><div class="rv red" id="rSurePay">1,000만원</div></div>
+    </div>
+
+    <div class="sim-section">수매담보대출 완납 시뮬레이션</div>
+    <div class="result-g3">
+      <div class="rcard"><div class="rl">월 차감 상환액</div><div class="rv red" id="rRepay2">193만원</div></div>
+      <div class="rcard"><div class="rl">완납 예상 기간</div><div class="rv" id="rMonths">6개월</div></div>
+      <div class="rcard"><div class="rl">완납 후 월 실수령</div><div class="rv teal" id="rAfterReceive">371만원</div></div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:17%"></div></div>
+      <div class="progress-labels"><span>시작</span><span id="progMid"></span><span id="progEnd"></span></div>
+    </div>
+
+    <div class="annual-box">
+      <div>
+        <div class="annual-label">완납 후 연간 순수익 (농소세 면제 기준)</div>
+        <div class="annual-sub" id="annualSub">월 385만원 × 12개월</div>
+      </div>
+      <div class="annual-val" id="annualVal">4,620만원</div>
+    </div>
+
+    <div class="highlight-box">
+      <strong>고객 관점:</strong> 1년차 월 <span id="hY1">14</span>만원(이자) + 수매 차감으로 실수령 <span id="hNet">178</span>만원. 완납 <span id="hMonths">6</span>개월 후 월 <span id="hAfter">371</span>만원 수령.<br>
+      <strong>회사 관점:</strong> 2년간 이자지원 총 <span id="hSupport">277</span>만원 + 수매담보 선지급 <span id="hSure">1,000</span>만원. 캐피탈 이자지원만 진행하면 선지급 0원, 현금 회전 부담 없음.
+    </div>
+  </div>
+
+
+</div>
+
+<div class="page" style="padding-top:32px;padding-bottom:48px;">
+
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+    <div style="background:var(--danger);color:white;padding:4px 14px;border-radius:2px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;flex-shrink:0;">Action List</div>
+    <div style="font-size:18px;font-weight:700;color:var(--ink);">더 알아봐야 할 점</div>
+  </div>
+
+  <!-- 핵심 강조 박스 — 바우처 대안 -->
+  <div style="background:var(--teal);color:white;border-radius:4px;padding:22px 24px;margin-bottom:20px;">
+    <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:8px;">바우처를 찾고 있었는데 — 이게 바우처다</div>
+    <div style="font-family:'Noto Serif KR',serif;font-size:22px;font-weight:700;margin-bottom:10px;line-height:1.3;">농기계 등록 완료 후 지자체 보조사업 기종 등재<br>= 고객이 구입가의 50~70%를 공짜로 받는 구조</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.8;margin-bottom:14px;">국가 단위 농기계 바우처는 없습니다. 하지만 지자체 농기계 보조사업이 사실상 바우처입니다. 정우시스템 컨테이너가 시군 보조사업 기종 목록에 등재되면, 고객은 구입가의 50~70%를 보조금으로 받고 나머지만 연 2% 농기계 대출로 조달할 수 있습니다. 자부담이 거의 0에 가까워집니다.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+      <div style="background:rgba(255,255,255,0.12);border-radius:4px;padding:12px;">
+        <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-bottom:4px;">예시 구입가</div>
+        <div style="font-size:18px;font-weight:700;">8,000만원</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.12);border-radius:4px;padding:12px;">
+        <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-bottom:4px;">지자체 보조금 50%</div>
+        <div style="font-size:18px;font-weight:700;">4,000만원 지원</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.12);border-radius:4px;padding:12px;">
+        <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-bottom:4px;">나머지 연 2% 대출</div>
+        <div style="font-size:18px;font-weight:700;">4,000만원 조달</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.65);padding-top:12px;border-top:1px solid rgba(255,255,255,0.15);">
+      6월 농기계 등록 완료 즉시 → 연천·파주·충청 관할 시군 농업기술센터 보조사업 기종 등재 신청
+    </div>
+  </div>
+
+  <!-- 나머지 할일 카드 -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
+    <div style="background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--danger);border-radius:0 4px 4px 0;padding:16px;">
+      <div style="font-size:10px;font-weight:700;color:var(--danger);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">렌탈사 제휴 협상 (예정)</div>
+      <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px;">조기상환수수료 조건이 핵심</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.8;">렌탈사가 24% 금리를 부를 것으로 예상. 고객 적용은 17%로 낮추고 차액을 정우시스템이 지원하는 구조. 계약 시 <strong style="color:var(--ink);">조기상환수수료 면제 또는 상한선 설정</strong>을 반드시 협상해야 함. 고객이 빨리 갚으려 할 때 수수료가 크면 불만으로 이어짐.</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--amber);border-radius:0 4px 4px 0;padding:16px;">
+      <div style="font-size:10px;font-weight:700;color:var(--amber);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">수매담보대출 내부 기준 수립</div>
+      <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px;">동시에 몇 건까지 가능한지 정해야 함</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.8;">수매담보대출은 정우시스템이 먼저 돈을 내주는 구조라 여러 고객에게 한꺼번에 집행하면 회사 자금이 빠르게 묶임. <strong style="color:var(--ink);">최대 동시 집행 건수와 총 한도</strong>를 미리 정해두어야 자금 회전이 안전함.</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--amber);border-radius:0 4px 4px 0;padding:16px;">
+      <div style="font-size:10px;font-weight:700;color:var(--amber);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">청창농 감정평가 상향</div>
+      <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px;">감정가가 낮아서 대출이 2~3천만원밖에 안 나옴</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.8;">지금은 컨테이너만 감정해서 2,000~3,000만원. IoT 설비, 재배 시스템, 환경제어 장치까지 <strong style="color:var(--ink);">감정 항목에 포함</strong>시키면 감정가가 올라가고 대출 한도도 따라서 높아질 수 있음. 감정평가 기관과 사전 협의 필요.</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--blue);border-radius:0 4px 4px 0;padding:16px;">
+      <div style="font-size:10px;font-weight:700;color:var(--blue);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">농기계 대출 + 보조금 구조 확인</div>
+      <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px;">동시 수령 불가 — 하지만 합치면 전액 커버</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.8;">보조금을 먼저 받으면 농기계 대출 한도에서 그만큼 차감됨. 단, <strong style="color:var(--ink);">보조금 + 대출을 합치면 구입가 전액 커버</strong> 가능. 구조 자체는 문제없으나 지자체 보조사업 기종 등재가 선행 조건.</div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>(주)정우시스템 · 대표 한종욱 · 1800-6442 · jungwoosystem.co.kr</span>
+  <span>경기도 파주시 중앙로 191, 2층 · 2026.04</span>
+</div>
+
+<script>
+function fmt(n){ return Math.round(n).toLocaleString('ko-KR'); }
+function calcAll(){
+  var capAmt  = parseInt(document.getElementById('capAmt').value);
+  var capRate = parseFloat(document.getElementById('capRate').value);
+  var sureAmt = parseInt(document.getElementById('sureAmt').value);
+  var monthly = parseInt(document.getElementById('monthlyAmt').value);
+
+  document.getElementById('capAmtOut').textContent    = fmt(capAmt)+'만원';
+  document.getElementById('capRateOut').textContent   = '연 '+capRate.toFixed(1)+'%';
+  document.getElementById('sureAmtOut').textContent   = fmt(sureAmt)+'만원';
+  document.getElementById('monthlyAmtOut').textContent= fmt(monthly)+'만원';
+
+  var monthInt   = capAmt > 0 ? Math.round(capAmt * capRate / 100 / 12) : 0;
+  var y1Cust     = Math.round(monthInt * 0.5);
+  var y1Support  = monthInt - y1Cust;
+  var y2Cust     = Math.round(monthInt * 0.7);
+  var y2Support  = monthInt - y2Cust;
+  var support2yr = Math.round(y1Support*12 + y2Support*12);
+
+  var repay        = Math.round(monthly * 0.5);
+  var months       = sureAmt > 0 ? Math.ceil(sureAmt / repay) : 0;
+  var netReceive   = monthly - repay - y1Cust;
+  var afterReceive = monthly - y2Cust;
+
+  document.getElementById('rY1Cust').textContent      = fmt(y1Cust)+'만원';
+  document.getElementById('rY2Cust').textContent      = fmt(y2Cust)+'만원';
+  document.getElementById('rRepay').textContent       = fmt(repay)+'만원';
+  document.getElementById('rNetReceive').textContent  = fmt(Math.max(0,netReceive))+'만원';
+  document.getElementById('rSupportY1').textContent   = fmt(y1Support)+'만원';
+  document.getElementById('rSupportY2').textContent   = fmt(y2Support)+'만원';
+  document.getElementById('rSupport2yr').textContent  = fmt(support2yr)+'만원';
+  document.getElementById('rSurePay').textContent     = fmt(sureAmt)+'만원';
+  document.getElementById('rRepay2').textContent      = fmt(repay)+'만원';
+  document.getElementById('rMonths').textContent      = sureAmt > 0 ? months+'개월' : '해당없음';
+  document.getElementById('rAfterReceive').textContent= fmt(Math.max(0,afterReceive))+'만원';
+
+  var pct = sureAmt > 0 ? Math.min(100, Math.round(months/36*100)) : 0;
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progMid').textContent  = sureAmt > 0 ? Math.round(months/2)+'개월째' : '';
+  document.getElementById('progEnd').textContent  = sureAmt > 0 ? months+'개월 완납' : '수매담보 없음';
+
+  document.getElementById('annualVal').textContent = fmt(monthly*12)+'만원';
+  document.getElementById('annualSub').textContent = '월 '+fmt(monthly)+'만원 × 12개월';
+
+  document.getElementById('hY1').textContent      = fmt(y1Cust);
+  document.getElementById('hNet').textContent     = fmt(Math.max(0,netReceive));
+  document.getElementById('hMonths').textContent  = sureAmt > 0 ? months : 0;
+  document.getElementById('hAfter').textContent   = fmt(Math.max(0,afterReceive));
+  document.getElementById('hSupport').textContent = fmt(support2yr);
+  document.getElementById('hSure').textContent    = fmt(sureAmt);
+}
+calcAll();
+</script>
+</body>
+</html>

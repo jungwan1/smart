@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>정우시스템 — 전략 자료실</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --paper: #f7f5f0;
+  --teal: #0b6b4e;
+  --teal-light: #e6f4ef;
+  --teal-mid: #1a9a72;
+  --blue: #1a4b8c;
+  --blue-light: #e8f0fb;
+  --amber: #b85c00;
+  --amber-light: #fef3e6;
+  --rule: #dbd8d0;
+  --muted: #7a7570;
+  --card: #ffffff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 14px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* 헤더 */
+.header {
+  background: var(--ink);
+  color: white;
+  padding: 48px 56px 56px;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  right: -60px; top: -60px;
+  width: 320px; height: 320px;
+  border-radius: 50%;
+  border: 50px solid rgba(255,255,255,0.04);
+}
+.header::after {
+  content: '';
+  position: absolute;
+  left: 40%; bottom: -80px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  border: 32px solid rgba(255,255,255,0.03);
+}
+.header-eyebrow {
+  font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(255,255,255,0.35); margin-bottom: 16px;
+}
+.header-logo {
+  display: flex; align-items: baseline; gap: 14px; margin-bottom: 8px;
+}
+.header-logo-main {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 36px; font-weight: 700; color: white;
+}
+.header-logo-sub {
+  font-size: 13px; color: rgba(255,255,255,0.4);
+}
+.header-tagline {
+  font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 32px;
+}
+.header-date {
+  position: absolute; top: 48px; right: 56px;
+  font-size: 11px; color: rgba(255,255,255,0.25); text-align: right; line-height: 1.7;
+}
+
+/* 배경 설명 섹션 */
+.context-section {
+  max-width: 860px; margin: 0 auto;
+  padding: 44px 48px 0;
+}
+.context-title {
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--muted); padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule); margin-bottom: 20px;
+}
+.context-intro {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 20px; font-weight: 700; color: var(--ink);
+  line-height: 1.5; margin-bottom: 14px;
+}
+.context-body {
+  font-size: 13px; color: var(--muted); line-height: 1.9;
+  max-width: 680px;
+}
+
+/* 지금 왜 중요한지 3가지 포인트 */
+.why-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px; margin: 24px 0 0;
+}
+.why-item {
+  background: var(--card); border: 1px solid var(--rule); border-radius: 4px;
+  padding: 16px 18px;
+}
+.why-num {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 32px; font-weight: 700; line-height: 1;
+  color: rgba(0,0,0,0.07); margin-bottom: 8px;
+}
+.why-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 5px; }
+.why-desc  { font-size: 11px; color: var(--muted); line-height: 1.7; }
+
+/* 구분선 */
+.divider {
+  max-width: 860px; margin: 36px auto 0;
+  padding: 0 48px;
+}
+.divider hr { border: none; border-top: 1px solid var(--rule); }
+
+/* 문서 카드 섹션 */
+.docs-section {
+  max-width: 860px; margin: 0 auto;
+  padding: 32px 48px 56px;
+}
+.docs-title {
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--muted); padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule); margin-bottom: 24px;
+}
+
+.doc-card {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 0;
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.doc-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+
+.doc-inner {
+  display: flex; align-items: stretch;
+}
+.doc-color-bar {
+  width: 6px; flex-shrink: 0;
+}
+.doc-color-bar.teal  { background: var(--teal); }
+.doc-color-bar.amber { background: var(--amber); }
+.doc-color-bar.blue  { background: var(--blue); }
+
+.doc-content {
+  flex: 1; padding: 22px 24px;
+}
+.doc-badge {
+  display: inline-block;
+  font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  padding: 2px 10px; border-radius: 2px; margin-bottom: 8px;
+}
+.doc-badge.teal  { background: var(--teal-light);  color: var(--teal); }
+.doc-badge.amber { background: var(--amber-light); color: var(--amber); }
+.doc-badge.blue  { background: var(--blue-light);  color: var(--blue); }
+
+.doc-title { font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.doc-desc  { font-size: 12px; color: var(--muted); line-height: 1.75; margin-bottom: 14px; max-width: 560px; }
+
+.doc-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.doc-tag {
+  font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 2px;
+}
+.doc-tag.teal  { background: var(--teal-light);  color: var(--teal); }
+.doc-tag.amber { background: var(--amber-light); color: var(--amber); }
+.doc-tag.blue  { background: var(--blue-light);  color: var(--blue); }
+.doc-tag.muted { background: var(--paper); color: var(--muted); border: 1px solid var(--rule); }
+
+.doc-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 22px;
+  border: none; border-radius: 3px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13px; font-weight: 700;
+  cursor: pointer; text-decoration: none;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.doc-btn:hover  { opacity: 0.88; transform: translateY(-1px); }
+.doc-btn:active { transform: translateY(0); }
+.doc-btn.teal  { background: var(--teal);  color: white; }
+.doc-btn.amber { background: var(--amber); color: white; }
+.doc-btn.blue  { background: var(--blue);  color: white; }
+
+.doc-btn svg { width: 14px; height: 14px; fill: currentColor; flex-shrink: 0; }
+
+/* 푸터 */
+.footer {
+  background: var(--ink); color: rgba(255,255,255,0.3);
+  padding: 20px 48px; font-size: 11px;
+  display: flex; justify-content: space-between;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 680px) {
+  .header { padding: 36px 24px 44px; }
+  .header-date { display: none; }
+  .header-logo-main { font-size: 26px; }
+  .context-section, .docs-section { padding-left: 24px; padding-right: 24px; }
+  .divider { padding: 0 24px; }
+  .why-grid { grid-template-columns: 1fr; }
+  .doc-title { font-size: 15px; }
+  .footer { padding: 16px 24px; flex-direction: column; gap: 4px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<div class="header">
+  <div class="header-date">
+    (주)정우시스템<br>2026년 4월
+  </div>
+  <div class="header-eyebrow">Jungwoo System · Strategy Hub</div>
+  <div class="header-logo">
+    <span class="header-logo-main">(주)정우시스템</span>
+    <span class="header-logo-sub">버섯재배 스마트팜</span>
+  </div>
+  <div class="header-tagline">설계 · 시공 · 수매 · 유통 ONE-STOP</div>
+</div>
+
+<!-- 배경 설명 -->
+<div class="context-section">
+  <div class="context-title">지금 정우시스템에 왜 필요한가</div>
+  <div class="context-intro">신규 계약 15건을 위해<br>지금 당장 필요한 3가지.</div>
+  <div class="context-body">
+    고객을 찾고, 자금을 마련해주고, 수매 외 판로까지 안내할 수 있어야 계약이 성사됩니다.
+  </div>
+
+  <div class="why-grid">
+    <div class="why-item">
+      <div class="why-num">01</div>
+      <div class="why-title">마케팅 — 고객을 어디서 찾나</div>
+    </div>
+    <div class="why-item">
+      <div class="why-num">02</div>
+      <div class="why-title">대출 — 초기 자금을 어떻게 마련하나</div>
+    </div>
+    <div class="why-item">
+      <div class="why-num">03</div>
+      <div class="why-title">수매 대안 — 버섯을 어디에 팔지</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"><hr></div>
+
+<!-- 문서 카드 -->
+<div class="docs-section">
+  <div class="docs-title">전략 자료 — 3가지 문서</div>
+
+  <!-- 마케팅 전략 -->
+  <div class="doc-card">
+    <div class="doc-inner">
+      <div class="doc-color-bar teal"></div>
+      <div class="doc-content">
+        <span class="doc-badge teal">마케팅 전략</span>
+        <div class="doc-title">신규고객확보를 위한 마케팅전략</div>
+        <div class="doc-desc">PR 영업을 메인으로 하되, 4월부터 우편 DM·현수막을 즉시 실행하고 메타 광고·블로그를 병행합니다.</div>
+        <div class="doc-tags">
+          <span class="doc-tag teal">PR 영업 (메인)</span>
+          <span class="doc-tag teal">메타 광고</span>
+          <span class="doc-tag teal">우편 DM — 4월 즉시</span>
+          <span class="doc-tag teal">현수막 — 4월 즉시</span>
+          <span class="doc-tag muted">연간 계약 15건 목표</span>
+        </div>
+        <a href="마케팅전략.html" class="doc-btn teal">
+          <svg viewBox="0 0 16 16"><path d="M6 2H2v12h12V10h-2v2H4V4h2V2zm4 0v4h2V4.414l-5.293 5.293-1.414-1.414L10.586 3H8V2z"/></svg>
+          마케팅 전략 보기
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 대출 전략 -->
+  <div class="doc-card">
+    <div class="doc-inner">
+      <div class="doc-color-bar amber"></div>
+      <div class="doc-content">
+        <span class="doc-badge amber">대출 전략</span>
+        <div class="doc-title">스마트팜대출 - 농신보를 대체할 대출방법제안</div>
+        <div class="doc-desc">농신보·농기계·청창농 중 하나를 메인으로, 부족분은 담보대출·캐피탈·수매담보대출로 보완합니다. 통합 시뮬레이터로 상담 시 바로 계산 가능.</div>
+        <div class="doc-tags">
+          <span class="doc-tag amber">농기계 대출 5,400만원 (6월↑)</span>
+          <span class="doc-tag amber">캐피탈 이자지원</span>
+          <span class="doc-tag amber">수매담보대출</span>
+          <span class="doc-tag amber">담보대출</span>
+          <span class="doc-tag muted">통합 시뮬레이터 포함</span>
+        </div>
+        <a href="대출전략.html" class="doc-btn amber">
+          <svg viewBox="0 0 16 16"><path d="M6 2H2v12h12V10h-2v2H4V4h2V2zm4 0v4h2V4.414l-5.293 5.293-1.414-1.414L10.586 3H8V2z"/></svg>
+          대출 전략 보기
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 수매 대안 -->
+  <div class="doc-card">
+    <div class="doc-inner">
+      <div class="doc-color-bar blue"></div>
+      <div class="doc-content">
+        <span class="doc-badge blue">수매 대안</span>
+        <div class="doc-title">수매대안책 - 박팀장의 수거방식 외의 고객 RP 방법</div>
+        <div class="doc-desc">농협 직판(16,000원), 유통업체 냉동차(운송비 30% 지원), 온라인 직판(최대 32,000원). 이미지 제작·스토어 등록 교육까지 정우시스템이 지원합니다.</div>
+        <div class="doc-tags">
+          <span class="doc-tag blue">정우 수매 13,000원/kg</span>
+          <span class="doc-tag blue">농협 직판 16,000원/kg</span>
+          <span class="doc-tag blue">온라인 직판 최대 32,000원/kg</span>
+          <span class="doc-tag muted">이미지 제작·교육 지원</span>
+        </div>
+        <a href="수매관련.html" class="doc-btn blue">
+          <svg viewBox="0 0 16 16"><path d="M6 2H2v12h12V10h-2v2H4V4h2V2zm4 0v4h2V4.414l-5.293 5.293-1.414-1.414L10.586 3H8V2z"/></svg>
+          수매 대안책 보기
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>(주)정우시스템 · 대표 한종욱 · 1800-6442 · jungwoosystem.co.kr</span>
+  <span>경기도 파주시 중앙로 191, 2층 · 2026.04</span>
+</div>
+
+</body>
+</html>
