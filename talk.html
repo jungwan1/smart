@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E1A24">
+<title>러시아어 회화 65</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0E1A24;
+  --ink2:#16242F;
+  --ink3:#1D3140;
+  --line:#2A4557;
+  --text:#E6EDF1;
+  --dim:#8FA7B5;
+  --amber:#EFB03A;
+  --sky:#86B9D2;
+  --ok:#5FBF9B;
+  --r:10px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--ink);
+  color:var(--text);
+  font-family:"PT Sans","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:16px;line-height:1.5;
+  padding-bottom:calc(28px + env(safe-area-inset-bottom));
+}
+.wrap{max-width:620px;margin:0 auto;padding:0 16px}
+
+/* masthead */
+header{padding:26px 0 18px;border-bottom:1px solid var(--line)}
+.mast{font-family:"PT Serif",Georgia,serif;font-size:1.45rem;line-height:1.35;color:var(--text);margin:0}
+.mast em{font-style:italic;color:var(--amber)}
+.mast-ko{margin:8px 0 0;color:var(--dim);font-size:.9rem}
+.rail{display:flex;flex-wrap:wrap;gap:3px;margin-top:18px}
+.tick{width:calc((100% - 32*3px)/33);min-width:5px;height:12px;border-radius:1px;background:var(--ink3)}
+.tick.on{background:var(--amber)}
+.rail-label{margin:8px 0 0;font-size:.8rem;color:var(--dim)}
+
+/* controls */
+.bar{position:sticky;top:0;z-index:5;background:var(--ink);border-bottom:1px solid var(--line);padding:10px 0 8px}
+.modes{display:flex;gap:6px}
+.modes button{flex:1;padding:9px 0;background:transparent;color:var(--dim);border:1px solid var(--line);border-radius:var(--r);font:inherit;font-size:.9rem;cursor:pointer}
+.modes button[aria-pressed="true"]{background:var(--ink3);color:var(--text);border-color:var(--sky)}
+.chips{display:flex;gap:6px;overflow-x:auto;margin-top:8px;padding-bottom:2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;padding:6px 11px;border:1px solid var(--line);background:transparent;color:var(--dim);border-radius:999px;font:inherit;font-size:.83rem;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--amber);color:#14212B;border-color:var(--amber);font-weight:700}
+.row2{display:flex;gap:6px;margin-top:8px;align-items:center}
+#q{flex:1;min-width:0;padding:8px 11px;background:var(--ink2);border:1px solid var(--line);color:var(--text);border-radius:var(--r);font:inherit;font-size:.9rem}
+#q::placeholder{color:#5E7483}
+.toggle{padding:8px 11px;background:var(--ink2);border:1px solid var(--line);color:var(--dim);border-radius:var(--r);font:inherit;font-size:.83rem;cursor:pointer}
+.toggle[aria-pressed="true"]{color:var(--text);border-color:var(--sky)}
+
+/* list */
+.cat{margin:26px 0 10px;font-family:"PT Serif",Georgia,serif;font-size:1rem;color:var(--sky);font-weight:400;border-left:2px solid var(--sky);padding-left:9px}
+.item{border-bottom:1px solid var(--ink3);padding:14px 0}
+.item.done{opacity:.5}
+.num{font-size:.76rem;color:#5E7483;font-variant-numeric:tabular-nums}
+.ko{margin:2px 0 0;font-size:1rem}
+.ru{font-family:"PT Serif",Georgia,serif;font-size:1.12rem;line-height:1.45;margin:7px 0 0;color:var(--amber)}
+.ru.veil{color:transparent;background:var(--ink3);border-radius:4px;cursor:pointer;user-select:none}
+.note{margin:4px 0 0;font-size:.8rem;color:var(--dim);font-style:italic}
+.acts{display:flex;gap:6px;margin-top:9px}
+.acts button{padding:5px 10px;background:transparent;border:1px solid var(--line);color:var(--dim);border-radius:7px;font:inherit;font-size:.8rem;cursor:pointer}
+.acts button.on{color:var(--ok);border-color:var(--ok)}
+
+/* card */
+.card{margin-top:22px;background:var(--ink2);border:1px solid var(--line);border-radius:14px;padding:26px 20px;min-height:238px;display:flex;flex-direction:column;justify-content:center;text-align:center;cursor:pointer}
+.card .num{display:block;margin-bottom:12px}
+.card .ko{font-size:1.16rem}
+.card .ru{font-size:1.3rem;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.hint{margin:14px 0 0;font-size:.82rem;color:#5E7483;text-align:center}
+.nav{display:flex;gap:8px;margin-top:14px}
+.nav button{flex:1;padding:13px 0;background:var(--ink2);border:1px solid var(--line);color:var(--text);border-radius:var(--r);font:inherit;cursor:pointer}
+.nav button.wide{flex:1.4}
+.empty{padding:44px 0;text-align:center;color:var(--dim)}
+.foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--ink3);display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:#5E7483}
+.foot button{background:none;border:none;color:#5E7483;font:inherit;font-size:.8rem;text-decoration:underline;cursor:pointer;padding:0}
+button:focus-visible,input:focus-visible,.ru.veil:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){.tick{transition:background .25s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="mast">Я немного <em>учил</em> русский язык,<br>но хочу говорить.</p>
+  <p class="mast-ko">러시아어를 조금 배웠어. 그런데 말하고 싶어.</p>
+  <div class="rail" id="rail" aria-hidden="true"></div>
+  <p class="rail-label" id="railLabel">0 / 65 외움</p>
+</header>
+
+<div class="bar">
+  <div class="modes">
+    <button id="mList" aria-pressed="true">목록</button>
+    <button id="mCard" aria-pressed="false">카드</button>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="row2">
+    <input id="q" type="search" placeholder="한국어·러시아어 검색" autocomplete="off">
+    <button class="toggle" id="tVeil" aria-pressed="true">러시아어 가리기</button>
+  </div>
+</div>
+
+<main id="view"></main>
+
+<div class="foot">
+  <span id="count"></span>
+  <button id="reset">외운 표시 전부 지우기</button>
+</div>
+
+</div>
+
+<script>
+const CATS = [
+  "내 러시아어 실력",
+  "나에 대해",
+  "내가 러시아에 온 이유",
+  "러시아에 대해 느낀 점",
+  "한국과 러시아에 대해",
+  "러시아 사람에게 물어볼 말"
+];
+
+const DATA = [
+ [1,0,"나는 러시아어를 조금 배웠어.","Я немного учил русский язык.",""],
+ [2,0,"기초 문법은 조금 알고 있어.","Я немного знаю русскую грамматику.",""],
+ [3,0,"쉬운 단어와 동사는 어느 정도 알아.","Я знаю простые слова и глаголы.",""],
+ [4,0,"그런데 아직 하고 싶은 말을 러시아어로 잘 표현하지 못해.","Но я пока не могу хорошо сказать по-русски то, что хочу.",""],
+ [5,0,"상대방이 하는 말을 알아들어도 대답하기가 어려울 때가 있어.","Иногда я понимаю, что мне говорят, но мне трудно ответить.",""],
+ [6,0,"나는 원래 사람들과 이야기하는 걸 좋아해.","Я люблю разговаривать с людьми.",""],
+ [7,0,"그래서 말하고 싶은데 말을 못 하면 정말 답답해.","Поэтому мне очень трудно, когда я хочу что-то сказать, но не могу.",""],
+ [8,0,"러시아어 단어를 외우는 것도 나한테는 어려워.","Мне трудно запоминать русские слова.",""],
+ [9,0,"새로운 단어를 외우면 전에 외웠던 단어와 자꾸 헷갈려.","Когда я учу новые слова, я часто путаю их со словами, которые уже учил.",""],
+ [10,0,"그래도 러시아 사람들과 직접 이야기하고 싶어서 계속 공부하고 있어.","Но я продолжаю учить русский, потому что хочу разговаривать с русскими людьми.",""],
+ [11,0,"내가 틀리게 말하면 고쳐 줘.","Если я говорю неправильно, пожалуйста, исправляй меня.",""],
+ [12,0,"그리고 조금 천천히 말해 주면 좋겠어.","И, пожалуйста, говори немного медленнее.",""],
+
+ [13,1,"나는 한국에서 왔고 서울에 살고 있어.","Я из Кореи и живу в Сеуле.",""],
+ [14,1,"나는 사업을 하고 있어.","У меня свой бизнес.",""],
+ [15,1,"주로 스마트팜과 관련된 일을 해.","В основном я занимаюсь бизнесом, связанным с умными фермами.",""],
+ [16,1,"일이 많아서 평소에는 좀 바쁜 편이야.","У меня много работы, поэтому я обычно занят.",""],
+ [17,1,"그래서 러시아어를 매일 공부하지는 못해.","Поэтому я не могу учить русский каждый день.",""],
+ [18,1,"시간이 있을 때 카페에서 러시아어를 공부하는 걸 좋아해.","Когда у меня есть время, я люблю учить русский в кафе.",""],
+ [19,1,"나는 사람들과 이야기하는 것도 좋아하고 새로운 사람을 만나는 것도 좋아해.","Я люблю разговаривать с людьми и знакомиться с новыми людьми.",""],
+ [20,1,"여행하는 것도 좋아해.","Я также люблю путешествовать.",""],
+ [21,1,"특히 도시를 구경하는 것보다 자연을 보는 걸 좋아해.","Особенно я люблю природу. Она мне нравится больше, чем большие города.",""],
+ [22,1,"산이나 바다처럼 경치가 좋은 곳에 가는 걸 좋아해.","Я люблю ездить в красивые места, где есть горы или море.",""],
+ [23,1,"조용한 곳에서 천천히 걷는 것도 좋아해.","Я также люблю спокойно гулять в тихих местах.",""],
+
+ [24,2,"나는 오래전부터 러시아에 한번 와 보고 싶었어.","Я давно хотел побывать в России.",""],
+ [25,2,"러시아어를 배우면서 러시아에 더 관심이 생겼어.","Когда я начал учить русский язык, мне стала ещё интереснее Россия.",""],
+ [26,2,"특히 러시아의 자연을 직접 보고 싶었어.","Особенно я хотел увидеть русскую природу своими глазами.",""],
+ [27,2,"사진이나 영상으로 러시아의 자연을 많이 봤는데 정말 아름다워 보였어.","Я много видел русскую природу на фотографиях и видео. Она очень красивая.",""],
+ [28,2,"그래서 언젠가는 꼭 직접 가 보고 싶다고 생각했어.","Поэтому я решил, что когда-нибудь обязательно приеду сюда.",""],
+ [29,2,"그리고 러시아어를 실제로 사용해 보고 싶었어.","Ещё я хотел попробовать говорить по-русски в России.",""],
+ [30,2,"한국에서는 러시아어를 사용할 기회가 별로 없어.","В Корее у меня мало возможностей говорить по-русски.",""],
+ [31,2,"그래서 러시아 사람들과 직접 이야기해 보는 것도 이번 여행의 목적 중 하나야.","Поэтому одна из целей моей поездки — поговорить с русскими людьми.",""],
+
+ [32,3,"러시아가 큰 나라인 건 알고 있었어.","Я знал, что Россия — большая страна.",""],
+ [33,3,"그런데 지도를 자세히 보고 정말 놀랐어.","Но когда я посмотрел на карту, я очень удивился.",""],
+ [34,3,"내가 생각했던 것보다 훨씬 더 크더라.","Россия намного больше, чем я думал.",""],
+ [35,3,"도시와 도시 사이의 거리도 정말 멀어서 놀랐어.","Меня также удивили большие расстояния между городами.",""],
+ [36,3,"한국에서는 이렇게 먼 거리를 이동할 일이 거의 없어.","В Корее нам редко приходится ездить так далеко.",""],
+ [37,3,"러시아 사람들은 조금 무뚝뚝할 거라고 생각했어.","Раньше я думал, что русские люди немного серьёзные и не очень разговорчивые.",""],
+ [38,3,"그런데 러시아 사람들은 생각보다 친절하다는 이야기를 많이 들었어.","Но я много слышал, что русские люди на самом деле добрые и дружелюбные.",""],
+ [39,3,"실제로 여행하면서 친절한 사람들을 많이 만나면 좋겠어.","Надеюсь, во время путешествия я встречу много добрых людей.",""],
+ [40,3,"러시아 사람들은 한국 사람에 대해 어떻게 생각하는지도 궁금해.","Мне интересно, что русские думают о корейцах.",""],
+
+ [41,4,"한국과 러시아는 생활 방식이 많이 다른 것 같아.","Мне кажется, что жизнь в Корее и России довольно разная.",""],
+ [42,4,"한국은 러시아에 비하면 정말 작은 나라야.","По сравнению с Россией Корея — очень маленькая страна.",""],
+ [43,4,"서울에는 사람이 정말 많아.","В Сеуле очень много людей.",""],
+ [44,4,"밤늦게까지 문을 여는 가게와 식당도 많아.","Многие магазины и рестораны открыты допоздна.",""],
+ [45,4,"한국에서는 밤에도 사람들이 밖에 많이 다녀.","В Корее даже ночью на улице много людей.",""],
+ [46,4,"나도 밤에 혼자 돌아다니는 것을 별로 무서워하지 않아.","Я тоже не боюсь гулять один ночью.",""],
+ [47,4,"한국은 밤늦게 혼자 걸어 다녀도 비교적 안전한 편이야.","В Корее довольно безопасно гулять одному даже поздно вечером.",""],
+ [48,4,"그런데 러시아에서는 어떤지 잘 모르겠어.","Но я не знаю, как с этим в России.",""],
+ [49,4,"러시아에서도 저녁에 혼자 돌아다녀도 괜찮아?","В России безопасно гулять одному вечером?",""],
+ [50,4,"여행자가 밤에 피해야 하는 곳도 있어?","Есть места, куда туристу лучше не ходить ночью?",""],
+ [51,4,"현지 사람들은 보통 몇 시쯤 집에 들어가?","Во сколько люди здесь обычно возвращаются домой?",""],
+ [52,4,"이런 건 인터넷보다 러시아 사람에게 직접 물어보고 싶었어.","Я хотел спросить об этом у русских, а не просто читать в интернете.",""],
+
+ [53,5,"너는 어느 도시에서 태어났어?","В каком городе ты родился?","여자에게: родилась?"],
+ [54,5,"지금도 그곳에서 살고 있어?","Ты до сих пор там живёшь?",""],
+ [55,5,"러시아에서 가장 좋아하는 도시는 어디야?","Какой город в России тебе нравится больше всего?",""],
+ [56,5,"자연을 좋아하면 어디에 가 보는 걸 추천해?","Если я люблю природу, куда ты советуешь поехать?",""],
+ [57,5,"외국인들이 잘 모르는 좋은 곳도 있어?","Есть хорошие места, о которых иностранцы обычно не знают?",""],
+ [58,5,"너는 한국에 가 본 적 있어?","Ты когда-нибудь был в Корее?","여자에게: была?"],
+ [59,5,"한국에 대해 어떤 이미지가 있어?","Что ты думаешь о Корее?",""],
+ [60,5,"한국 음식 먹어 본 적 있어?","Ты когда-нибудь пробовал корейскую еду?","여자에게: пробовала?"],
+ [61,5,"한국에 온다면 어디에 가 보고 싶어?","Если ты приедешь в Корею, куда ты хочешь поехать?",""],
+ [62,5,"평소에는 주말에 뭐 해?","Что ты обычно делаешь на выходных?",""],
+ [63,5,"여행하는 거 좋아해?","Ты любишь путешествовать?",""],
+ [64,5,"다른 나라에 가 본 적 있어?","Ты был в других странах?","여자에게: была?"],
+ [65,5,"요즘 가장 관심 있는 건 뭐야?","Чем ты сейчас интересуешься?",""]
+].map(function(r){return {n:r[0],cat:r[1],ko:r[2],ru:r[3],note:r[4]};});
+
+const PRIORITY = new Set([4,5,7,9,19,21,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,49,50,53,54,55,56,57,58,59,60,61,62,63,64,65]);
+
+/* ---- 저장 (사용할 수 없는 환경이면 이번 세션에만 기억) ---- */
+const KEY="ru-talk-65";
+let known=new Set();
+function load(){try{const v=localStorage.getItem(KEY);if(v)known=new Set(JSON.parse(v));}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify([...known]));}catch(e){}}
+load();
+
+const state={mode:"list",cat:"all",veil:true,q:"",i:0,deck:[],flipped:false};
+
+/* ---- 필터 ---- */
+function filtered(){
+  const q=state.q.trim().toLowerCase();
+  return DATA.filter(function(d){
+    if(state.cat==="pri"&&!PRIORITY.has(d.n))return false;
+    if(state.cat==="todo"&&known.has(d.n))return false;
+    if(typeof state.cat==="number"&&d.cat!==state.cat)return false;
+    if(q&&!(d.ko.toLowerCase().includes(q)||d.ru.toLowerCase().includes(q)||String(d.n)===q))return false;
+    return true;
+  });
+}
+
+/* ---- 말하기 ---- */
+function speak(text){
+  if(!("speechSynthesis" in window))return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang="ru-RU";u.rate=.85;
+  const v=speechSynthesis.getVoices().find(function(x){return x.lang&&x.lang.toLowerCase().indexOf("ru")===0;});
+  if(v)u.voice=v;
+  speechSynthesis.speak(u);
+}
+if("speechSynthesis" in window)speechSynthesis.getVoices();
+
+/* ---- 상단 진도 ---- */
+const rail=document.getElementById("rail");
+DATA.forEach(function(d){
+  const s=document.createElement("span");
+  s.className="tick";s.dataset.n=d.n;rail.appendChild(s);
+});
+function paintRail(){
+  rail.querySelectorAll(".tick").forEach(function(t){
+    t.classList.toggle("on",known.has(Number(t.dataset.n)));
+  });
+  document.getElementById("railLabel").textContent=known.size+" / 65 외움";
+}
+
+/* ---- 칩 ---- */
+const chipDefs=[["all","전체"],["pri","추천"],["todo","아직"]].concat(CATS.map(function(c,i){return [i,(i+1)+". "+c];}));
+const chipBox=document.getElementById("chips");
+chipDefs.forEach(function(def){
+  const b=document.createElement("button");
+  b.className="chip";b.textContent=def[1];
+  b.setAttribute("aria-pressed",String(state.cat===def[0]));
+  b.onclick=function(){state.cat=def[0];state.i=0;state.flipped=false;buildDeck();
+    chipBox.querySelectorAll(".chip").forEach(function(x){x.setAttribute("aria-pressed","false");});
+    b.setAttribute("aria-pressed","true");render();};
+  chipBox.appendChild(b);
+});
+
+/* ---- 렌더 ---- */
+const view=document.getElementById("view");
+
+function itemEl(d,inCard){
+  const wrap=document.createElement("div");
+  wrap.className="item"+(known.has(d.n)?" done":"");
+
+  const num=document.createElement("span");
+  num.className="num";num.textContent=String(d.n).padStart(2,"0");
+  wrap.appendChild(num);
+
+  const ko=document.createElement("p");
+  ko.className="ko";ko.textContent=d.ko;wrap.appendChild(ko);
+
+  const ru=document.createElement("p");
+  ru.className="ru"+(state.veil?" veil":"");
+  ru.textContent=d.ru;ru.tabIndex=0;
+  ru.onclick=function(){ru.classList.remove("veil");};
+  ru.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();ru.classList.remove("veil");}};
+  wrap.appendChild(ru);
+
+  if(d.note){
+    const nt=document.createElement("p");
+    nt.className="note";nt.textContent=d.note;wrap.appendChild(nt);
+  }
+
+  const acts=document.createElement("div");
+  acts.className="acts";
+
+  const say=document.createElement("button");
+  say.textContent="들기";
+  say.onclick=function(){ru.classList.remove("veil");speak(d.ru);};
+  acts.appendChild(say);
+
+  const mark=document.createElement("button");
+  mark.textContent=known.has(d.n)?"외움":"외움 표시";
+  if(known.has(d.n))mark.classList.add("on");
+  mark.onclick=function(){
+    if(known.has(d.n))known.delete(d.n);else known.add(d.n);
+    save();paintRail();render();
+  };
+  acts.appendChild(mark);
+
+  wrap.appendChild(acts);
+  return wrap;
+}
+
+function renderList(){
+  view.innerHTML="";
+  const list=filtered();
+  if(!list.length){
+    view.innerHTML='<p class="empty">해당하는 문장이 없어. 검색어나 분류를 바꿔 봐.</p>';
+    return;
+  }
+  let last=-1;
+  list.forEach(function(d){
+    if(d.cat!==last&&state.cat!=="todo"){
+      const h=document.createElement("h2");
+      h.className="cat";h.textContent=(d.cat+1)+". "+CATS[d.cat];
+      view.appendChild(h);last=d.cat;
+    }
+    view.appendChild(itemEl(d));
+  });
+}
+
+function buildDeck(){
+  state.deck=filtered().map(function(d){return d.n;});
+  if(state.i>=state.deck.length)state.i=0;
+}
+
+function renderCard(){
+  view.innerHTML="";
+  if(!state.deck.length){
+    view.innerHTML='<p class="empty">카드가 없어. 분류를 바꾸거나 외운 표시를 지워 봐.</p>';
+    return;
+  }
+  const d=DATA[state.deck[state.i]-1];
+
+  const card=document.createElement("div");
+  card.className="card";
+  card.onclick=function(){state.flipped=!state.flipped;renderCard();};
+
+  const num=document.createElement("span");
+  num.className="num";
+  num.textContent=String(d.n).padStart(2,"0")+"  ·  "+CATS[d.cat]+"  ·  "+(state.i+1)+"/"+state.deck.length;
+  card.appendChild(num);
+
+  const ko=document.createElement("p");
+  ko.className="ko";ko.textContent=d.ko;card.appendChild(ko);
+
+  if(state.flipped){
+    const ru=document.createElement("p");
+    ru.className="ru";ru.textContent=d.ru;card.appendChild(ru);
+    if(d.note){
+      const nt=document.createElement("p");
+      nt.className="note";nt.textContent=d.note;card.appendChild(nt);
+    }
+  }
+  view.appendChild(card);
+
+  const hint=document.createElement("p");
+  hint.className="hint";
+  hint.textContent=state.flipped?"카드를 누르면 다시 가려져":"먼저 소리 내어 말해 본 다음 카드를 눌러";
+  view.appendChild(hint);
+
+  const nav=document.createElement("div");
+  nav.className="nav";
+  nav.appendChild(navBtn("이전",function(){state.i=(state.i-1+state.deck.length)%state.deck.length;state.flipped=false;renderCard();}));
+  nav.appendChild(navBtn("들기",function(){state.flipped=true;renderCard();speak(d.ru);}));
+  nav.appendChild(navBtn("다음",function(){state.i=(state.i+1)%state.deck.length;state.flipped=false;renderCard();}));
+  view.appendChild(nav);
+
+  const nav2=document.createElement("div");
+  nav2.className="nav";
+  const mk=navBtn(known.has(d.n)?"외움 취소":"외움 표시",function(){
+    if(known.has(d.n))known.delete(d.n);else known.add(d.n);
+    save();paintRail();updateCount();renderCard();
+  });
+  mk.className="wide";
+  nav2.appendChild(mk);
+  nav2.appendChild(navBtn("섞기",function(){
+    for(let i=state.deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=state.deck[i];state.deck[i]=state.deck[j];state.deck[j]=t;}
+    state.i=0;state.flipped=false;renderCard();
+  }));
+  view.appendChild(nav2);
+}
+
+function navBtn(label,fn){
+  const b=document.createElement("button");
+  b.textContent=label;b.onclick=fn;return b;
+}
+
+function updateCount(){
+  document.getElementById("count").textContent=filtered().length+"문장 보는 중";
+}
+
+function render(){
+  if(state.mode==="list")renderList();else renderCard();
+  paintRail();updateCount();
+}
+
+/* ---- 이벤트 ---- */
+const mList=document.getElementById("mList"),mCard=document.getElementById("mCard");
+mList.onclick=function(){state.mode="list";mList.setAttribute("aria-pressed","true");mCard.setAttribute("aria-pressed","false");render();};
+mCard.onclick=function(){state.mode="card";mCard.setAttribute("aria-pressed","true");mList.setAttribute("aria-pressed","false");buildDeck();render();};
+
+document.getElementById("q").oninput=function(e){state.q=e.target.value;state.i=0;if(state.mode==="card")buildDeck();render();};
+
+const tVeil=document.getElementById("tVeil");
+tVeil.onclick=function(){
+  state.veil=!state.veil;
+  tVeil.setAttribute("aria-pressed",String(state.veil));
+  tVeil.textContent=state.veil?"러시아어 가리기":"러시아어 보이기";
+  render();
+};
+
+document.getElementById("reset").onclick=function(){
+  if(!known.size)return;
+  if(confirm("외운 표시를 전부 지울까?")){known=new Set();save();render();}
+};
+
+buildDeck();render();
+</script>
+</body>
+</html>
