@@ -10,7 +10,7 @@ button{font:inherit;padding:7px 13px;border-radius:7px;border:1px solid #2f6b3a;
 button.sub{background:#fff;color:#2f6b3a}button.del{background:#fff;color:#b33;border-color:#b33}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:16px}
 .card{background:#fff;border-radius:10px;padding:14px;box-shadow:0 1px 3px #0001}.card .l{font-size:13px;color:#667}.card .v{font-size:19px;font-weight:700;margin-top:4px}
-.card.hl{background:#fff8e1;border:2px solid #e0a800;grid-column:span 2}.card.hl .v{font-size:26px;color:#9a6b00}
+.card.hl{background:#2f6b3a;color:#fff;grid-column:span 2}.card.hl .l{color:#dfeedd}.card.hl .v{font-size:28px}
 .box{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 3px #0001;margin-bottom:14px}
 table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:8px 6px;border-bottom:1px solid #e3e8e2;text-align:left}th{background:#eef3ec}
 td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}tr.click{cursor:pointer}tr.click:hover{background:#f6faf5}
@@ -23,15 +23,19 @@ label{display:block;font-size:13px;color:#556;margin:8px 0 3px}input,textarea{fo
 @media print{header,.noprint{display:none!important}body{background:#fff}.box{box-shadow:none;padding:0}main{padding:0}}
 </style></head><body>
 <header><h1>🌱 정우스마트팜 계약 정산</h1><nav class="noprint">
-<button data-v="dash">대시보드</button><button data-v="all">계약 상세</button><button data-v="ledger">이승윤 적립 장부</button><button data-v="edit">+ 새 계약</button>
+<button data-v="dash">대시보드</button><button data-v="opex">월 운영지출</button><button data-v="ledger">이승윤 적립 장부</button><button data-v="edit">+ 새 계약</button>
 <button class="sub" id="exp">백업 내보내기</button><button class="sub" id="imp">불러오기</button><input type="file" id="file" accept=".json" hidden></nav></header>
 <main id="app"></main>
 <script>
 const KEY='jw-smartfarm-settlement-v1';
 const won=n=>Math.round(n).toLocaleString('ko-KR')+'원';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function itemAmt(it){return Math.round((+it.price||0)*(it.qty===''||it.qty==null?1:+it.qty))}
-function calc(c){const exp=(c.items||[]).reduce((s,i)=>s+itemAmt(i),0);const income=Math.round(+c.income||0);const net=income-exp;
+const num=v=>{const n=parseFloat(String(v??'').replace(/[^\d.-]/g,''));return isFinite(n)?n:0};
+const fmt=v=>{if(v===''||v==null)return'';const t=String(v).replace(/[^\d.-]/g,'');if(t===''||t==='-')return t;const[a,b]=t.split('.');return(a.startsWith('-')?'-':'')+a.replace('-','').replace(/^0+(?=\d)/,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')+(b!==undefined?'.'+b:'')};
+const qtyOf=it=>it.qty===''||it.qty==null?1:num(it.qty);
+document.addEventListener('input',e=>{const t=e.target;if(!t.classList||!t.classList.contains('num'))return;const p=t.selectionStart,before=t.value.slice(0,p).replace(/,/g,'').length;t.value=fmt(t.value);let i=0,c=0;while(i<t.value.length&&c<before){if(t.value[i]!=',')c++;i++}try{t.setSelectionRange(i,i)}catch(x){}},true);
+function itemAmt(it){return Math.round(num(it.price)*qtyOf(it))}
+function calc(c){const exp=(c.items||[]).reduce((s,i)=>s+itemAmt(i),0);const income=Math.round(num(c.income));const net=income-exp;
  const park=Math.round(net*0.33),lee=Math.round(net*0.33),ops=net-park-lee;return{income,exp,net,park,lee,ops}}
 const SEED_VER=2;
 function seed(){return[{id:'gimpo',name:'김포건',date:'2026-10-15',client:'김포',income:70000000,memo:'부가세 미계산. 순이익은 총 계약금액 − 지출 총액(현금+자재 대체)으로 계산.',
@@ -49,8 +53,8 @@ const sorted=()=>[...db].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
 const app=document.getElementById('app');
 function go(v,id){location.hash=v+(id?'/'+id:'')}
 function route(){const[v,id]=location.hash.slice(1).split('/');document.querySelectorAll('nav [data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==(v||'dash')));
- if(v=='ledger')ledger();else if(v=='all')all();else if(v=='edit')edit(id);else if(v=='view')view(id);else dash();window.scrollTo(0,0)}
-const sum=(a,f)=>(a||[]).reduce((s,x)=>s+(+x[f]||0),0);
+ if(v=='ledger')ledger();else if(v=='opex')opex(id);else if(v=='all'){location.replace('#dash');return}else if(v=='edit')edit(id);else if(v=='view')view(id);else dash();window.scrollTo(0,0)}
+const sum=(a,f)=>(a||[]).reduce((s,x)=>s+num(x[f]),0);
 function flow(c){const r=calc(c),rc=c.receipts||[],done=rc.filter(x=>x.status!='예정');
  const parkAdv=sum((c.advances||[]).filter(a=>a.who=='박세원'),'amount');
  const parties=[...new Set(rc.map(x=>x.to))].map(p=>{const got=sum(rc.filter(x=>x.to==p&&x.status!='예정'),'amount'),due=sum(rc.filter(x=>x.to==p&&x.status=='예정'),'amount');
@@ -68,14 +72,14 @@ function flowHTML(c){const r=calc(c),f=flow(c);if(!(c.receipts||[]).length&&!(c.
  <tr><td>박세원 수당 (33%)</td><td class="n">${won(r.park)}</td></tr><tr><td>박세원 선지급 합계</td><td class="n">${won(f.parkAdv)}</td></tr>
  <tr class="tot"><td>박세원 잔여 지급액</td><td class="n">${won(f.parkLeft)}</td></tr></table>`}
 function detHTML(c){const r=calc(c);return`<div class="det"><h5>수입</h5><table><tr><td>총 계약금액 (입금 합계 기준)</td><td class="n"><b>${won(r.income)}</b></td></tr></table>
-<h5>지출 항목</h5><table><tr><th>항목명</th><th class="n">단가 × 수량</th><th class="n">금액</th></tr>${c.items.map(i=>`<tr><td>${esc(i.name)}${i.note?`<div class="muted">${esc(i.note)}</div>`:''}</td><td class="n">${won(+i.price||0)} × ${(i.qty===''||i.qty==null?1:+i.qty).toLocaleString()}</td><td class="n">${won(itemAmt(i))}</td></tr>`).join('')}
+<h5>지출 항목</h5><table><tr><th>항목명</th><th class="n">단가 × 수량</th><th class="n">금액</th></tr>${c.items.map(i=>`<tr><td>${esc(i.name)}${i.note?`<div class="muted">${esc(i.note)}</div>`:''}</td><td class="n">${won(num(i.price))} × ${qtyOf(i).toLocaleString()}</td><td class="n">${won(itemAmt(i))}</td></tr>`).join('')}
 <tr class="tot"><td colspan=2>지출 합계</td><td class="n">${won(r.exp)}</td></tr><tr class="tot"><td colspan=2>순이익 (입금 − 지출)</td><td class="n">${won(r.net)}</td></tr></table>
 <h5>순이익 배분</h5><table><tr><td>박세원 수당 33%</td><td>입금 직후 지급</td><td class="n">${won(r.park)}</td></tr><tr><td>이승윤 수당 33%</td><td>적립 (엑시트 시 전액 지급)</td><td class="n">${won(r.lee)}</td></tr><tr><td>운영비 34%</td><td>정우팜 귀속</td><td class="n">${won(r.ops)}</td></tr></table>${flowHTML(c)}${c.memo?`<p class="muted">메모: ${esc(c.memo)}</p>`:''}</div>`}
 function tog(id,b){const e=document.getElementById('d-'+id);const o=e.hidden;e.hidden=!o;b.textContent=o?'▲':'▼'}
 function all(){app.innerHTML=`<h3>계약 상세 (${db.length}건)</h3>`+sorted().map(c=>`<div class="box ccard"><div class="row" style="justify-content:space-between"><b>${esc(c.name)} <span class="muted">${esc(c.date)} · ${esc(c.client)}</span></b><span class="noprint"><button class="sub btn-s" onclick="go('view','${c.id}')">정산서</button> <button class="sub btn-s" onclick="go('edit','${c.id}')">수정</button></span></div>${detHTML(c)}</div>`).join('')+`<button class="sub noprint" onclick="print()">전체 인쇄</button>`}
 function dash(){let t={income:0,net:0,park:0,lee:0,ops:0},q={receivable:0,pending:0,parkLeft:0};sorted().forEach(c=>{const r=calc(c),f=flow(c);for(k in t)t[k]+=r[k];for(k in q)q[k]+=f[k]});
- app.innerHTML=`<div class="cards"><div class="card hl"><div class="l">이승윤 누적 적립금 (엑시트 시 전액 지급)</div><div class="v">${won(t.lee)}</div></div>
- <div class="card"><div class="l">총 계약 수</div><div class="v">${db.length}건</div></div><div class="card"><div class="l">총 입금</div><div class="v">${won(t.income)}</div></div>
+ app.innerHTML=`<div class="cards"><div class="card hl"><div class="l">총 매출액 (계약금액 합계)</div><div class="v">${won(t.income)}</div></div>
+ <div class="card"><div class="l">총 계약 수</div><div class="v">${db.length}건</div></div><div class="card"><div class="l">이승윤 누적 적립금 (엑시트 시 전액 지급)</div><div class="v">${won(t.lee)}</div></div>
  <div class="card"><div class="l">총 순이익</div><div class="v">${won(t.net)}</div></div><div class="card"><div class="l">박세원 누적 수당</div><div class="v">${won(t.park)}</div></div>
  <div class="card"><div class="l">운영비 누적 (정우팜 귀속)</div><div class="v">${won(t.ops)}</div></div><div class="card"><div class="l">박세원 잔여 지급액</div><div class="v">${won(q.parkLeft)}</div></div><div class="card"><div class="l">미수금 합계</div><div class="v" style="color:#b33">${won(q.receivable)}</div></div><div class="card"><div class="l">입금 예정 합계</div><div class="v" style="color:#b36b00">${won(q.pending)}</div></div></div>
  <div class="box"><div class="row" style="justify-content:space-between"><b>계약 건 목록</b><button onclick="go('edit')">+ 새 계약</button></div>
@@ -91,7 +95,7 @@ function view(id){const c=db.find(x=>x.id==id);if(!c)return go('dash');const r=c
  <tr><th>고객/현장</th><td colspan=3>${esc(c.client)}</td></tr></table>
  <h4>1. 수입</h4><table><tr class="tot"><td>총 입금액</td><td class="n">${won(r.income)}</td></tr></table>
  <h4>2. 지출</h4><table><tr><th>항목</th><th class="n">단가</th><th class="n">수량</th><th class="n">금액</th></tr>
- ${c.items.map(i=>`<tr><td>${esc(i.name)}${i.note?`<div class="muted">${esc(i.note)}</div>`:''}</td><td class="n">${won(+i.price||0)}</td><td class="n">${(i.qty===''||i.qty==null?1:+i.qty).toLocaleString()}</td><td class="n">${won(itemAmt(i))}</td></tr>`).join('')}
+ ${c.items.map(i=>`<tr><td>${esc(i.name)}${i.note?`<div class="muted">${esc(i.note)}</div>`:''}</td><td class="n">${won(num(i.price))}</td><td class="n">${qtyOf(i).toLocaleString()}</td><td class="n">${won(itemAmt(i))}</td></tr>`).join('')}
  <tr class="tot"><td colspan=3>지출 합계</td><td class="n">${won(r.exp)}</td></tr></table>
  <h4>3. 순이익</h4><table><tr class="tot"><td>순이익 (입금 − 지출)</td><td class="n">${won(r.net)}</td></tr></table>
  <h4>4. 순이익 배분</h4><table><tr><th>구분</th><th>비율</th><th>지급 조건</th><th class="n">금액</th></tr>
@@ -107,13 +111,13 @@ const LS={receipts:['입금 내역',[['stage','단계(계약금/중도금/잔금
  advances:['선지급 내역',[['who','받은 사람'],['amount','금액',1],['from','출처 입금']],{who:'박세원',amount:'',from:''}],
  offsets:['상계·자재 대체',[['party','상대'],['amount','금액',1],['desc','내용']],{party:'',amount:'',desc:''}],
  receivables:['미수금',[['party','상대'],['amount','금액',1],['note','메모']],{party:'',amount:'',note:''}]};
-function lists(c){const el=document.getElementById('lists');const draw=()=>{el.innerHTML=Object.entries(LS).map(([k,[t,fs]])=>`<label>${t}</label><table class="exp">${(c[k]||[]).map((x,i)=>`<tr>${fs.map(([f,ph,n])=>`<td><input ${n?'type=number':''} placeholder="${ph}" data-l=${k} data-i=${i} data-f=${f} value="${esc(x[f])}"></td>`).join('')}<td><button class="del" data-l=${k} data-x=${i}>✕</button></td></tr>`).join('')}</table><button class="sub btn-s" data-add=${k}>+ ${t} 추가</button>`).join('')};
+function lists(c){const el=document.getElementById('lists');const draw=()=>{el.innerHTML=Object.entries(LS).map(([k,[t,fs]])=>`<label>${t}</label><table class="exp">${(c[k]||[]).map((x,i)=>`<tr>${fs.map(([f,ph,n])=>`<td><input ${n?'class=num inputmode=numeric':''} placeholder="${ph}" data-l=${k} data-i=${i} data-f=${f} value="${esc(n?fmt(x[f]):x[f])}"></td>`).join('')}<td><button class="del" data-l=${k} data-x=${i}>✕</button></td></tr>`).join('')}</table><button class="sub btn-s" data-add=${k}>+ ${t} 추가</button>`).join('')};
  el.oninput=e=>{const d=e.target.dataset;if(d.f)c[d.l][d.i][d.f]=e.target.value};
  el.onclick=e=>{const d=e.target.dataset;if(d.add){(c[d.add]=c[d.add]||[]).push({...LS[d.add][2]});draw()}else if(d.x!=null){c[d.l].splice(+d.x,1);draw()}};draw()}
 function edit(id){const c=id?JSON.parse(JSON.stringify(db.find(x=>x.id==id)||{})):{name:'',date:new Date().toISOString().slice(0,10),client:'',income:'',memo:'',items:[{name:'',price:'',qty:1}]};
  app.innerHTML=`<div class="box"><h3>${id?'계약 수정':'새 계약 등록'}</h3><div class="grid2">
  <div><label>건명</label><input id="f-name" value="${esc(c.name)}"></div><div><label>계약일</label><input type="date" id="f-date" value="${esc(c.date)}"></div>
- <div><label>고객/현장</label><input id="f-client" value="${esc(c.client)}"></div><div><label>총 입금액(원)</label><input type="number" id="f-income" value="${esc(c.income)}"></div></div>
+ <div><label>고객/현장</label><input id="f-client" value="${esc(c.client)}"></div><div><label>총 입금액(원)</label><input class="num" inputmode="numeric" id="f-income" value="${fmt(c.income)}"></div></div>
  <label>지출 항목 (단일 금액은 수량 1)</label><table class="exp"><tr><th>항목명</th><th>단가</th><th style="width:80px">수량</th><th class="n">금액</th><th></th></tr><tbody id="rows"></tbody></table>
  <button class="sub" id="add" style="margin-top:8px">+ 항목 추가</button>
  <div id="lists"></div>
@@ -121,7 +125,7 @@ function edit(id){const c=id?JSON.parse(JSON.stringify(db.find(x=>x.id==id)||{})
  <div class="box" id="prev" style="background:#f7faf6;margin-top:12px"></div>
  <div class="row"><button id="sv">저장</button><button class="sub" onclick="history.back()">취소</button></div></div>`;
  const rows=document.getElementById('rows');
- const draw=()=>{rows.innerHTML=c.items.map((i,k)=>`<tr><td><input data-k=${k} data-f=name value="${esc(i.name)}"></td><td><input type=number data-k=${k} data-f=price value="${esc(i.price)}"></td><td><input type=number data-k=${k} data-f=qty value="${esc(i.qty)}"></td><td class="n">${won(itemAmt(i))}</td><td><button class="del" data-x=${k}>✕</button></td></tr>`).join('');upd()};
+ const draw=()=>{rows.innerHTML=c.items.map((i,k)=>`<tr><td><input data-k=${k} data-f=name value="${esc(i.name)}"></td><td><input class=num inputmode=numeric data-k=${k} data-f=price value="${fmt(i.price)}"></td><td><input class=num inputmode=decimal data-k=${k} data-f=qty value="${fmt(i.qty)}"></td><td class="n">${won(itemAmt(i))}</td><td><button class="del" data-x=${k}>✕</button></td></tr>`).join('');upd()};
  const upd=()=>{c.income=document.getElementById('f-income').value;const r=calc(c);[...rows.rows].forEach((tr,k)=>tr.cells[3].textContent=won(itemAmt(c.items[k])));
   document.getElementById('prev').innerHTML=`지출 합계 <b>${won(r.exp)}</b> · 순이익 <b>${won(r.net)}</b><br>박세원 ${won(r.park)} · 이승윤 적립 ${won(r.lee)} · 운영비 ${won(r.ops)}`};
  rows.oninput=e=>{const t=e.target;if(t.dataset.f){c.items[t.dataset.k][t.dataset.f]=t.value;upd()}};
@@ -129,11 +133,40 @@ function edit(id){const c=id?JSON.parse(JSON.stringify(db.find(x=>x.id==id)||{})
  document.getElementById('f-income').oninput=upd;document.getElementById('add').onclick=()=>{c.items.push({name:'',price:'',qty:1});draw()};
  document.getElementById('sv').onclick=()=>{c.name=document.getElementById('f-name').value.trim();if(!c.name)return alert('건명을 입력하세요');
   c.date=document.getElementById('f-date').value;c.client=document.getElementById('f-client').value;c.memo=document.getElementById('f-memo').value;
-  c.income=+c.income||0;c.items=c.items.filter(i=>i.name||+i.price).map(i=>({...i,price:+i.price||0,qty:i.qty===''?1:+i.qty}));for(const k in LS)c[k]=(c[k]||[]).filter(x=>+x.amount).map(x=>({...x,amount:+x.amount}));
+  c.income=num(c.income);c.items=c.items.filter(i=>i.name||num(i.price)).map(i=>({...i,price:num(i.price),qty:i.qty===''?1:num(i.qty)}));for(const k in LS)c[k]=(c[k]||[]).filter(x=>num(x.amount)).map(x=>({...x,amount:num(x.amount)}));
   if(id)db[db.findIndex(x=>x.id==id)]=c;else{c.id='c'+Date.now().toString(36);db.push(c)}save();go('view',c.id)};draw();lists(c)}
+const OKEY='jw-smartfarm-opex-v1';
+const FIXED=[['급여','박광호',3250000],['급여','이승윤',3250000],['이사 급여','김선아',3000000],['안성공장 월세','',2500000],['법인사무실 월세','',290000],['수매차량 유지비','',1000000],['마케팅비','',2000000],['잡비','',3000000]].map(([name,to,amount])=>({name,to,amount,memo:''}));
+const SPLIT={'박광호 급여':['급여','박광호'],'이승윤 급여':['급여','이승윤'],'김선아 이사 급여':['이사 급여','김선아']};
+const splitRow=r=>{if(r.to===undefined){const sp=SPLIT[r.name];r.to=sp?sp[1]:'';if(sp)r.name=sp[0]}if(r.memo===undefined)r.memo='';return r};
+function migrateO(o){o.fixed.forEach(splitRow);Object.values(o.months||{}).forEach(a=>a.forEach(splitRow));if(!o.fixed.some(f=>f.name=='법인사무실 월세')){const i=o.fixed.findIndex(f=>f.name=='안성공장 월세');o.fixed.splice(i<0?o.fixed.length:i+1,0,{name:'법인사무실 월세',to:'',amount:290000,memo:''})}return o}
+let ox;try{ox=JSON.parse(localStorage.getItem(OKEY))}catch(e){}if(!ox||!ox.fixed)ox={fixed:JSON.parse(JSON.stringify(FIXED)),months:{}};migrateO(ox);
+function saveO(){localStorage.setItem(OKEY,JSON.stringify(ox))}saveO();
+const ym=d=>(d||'').slice(0,7),lastDay=m=>{const[y,mm]=m.split('-').map(Number);return m+'-'+String(new Date(y,mm,0).getDate()).padStart(2,'0')};
+function inflow(m){return db.filter(c=>ym(c.date)==m).reduce((s,c)=>s+calc(c).ops,0)}
+function opexMonths(){return[...new Set([...Object.keys(ox.months),...db.map(c=>ym(c.date)).filter(Boolean)])].sort()}
+function monthStat(m){const e=sum(ox.months[m],'amount'),i=inflow(m);return{i,e,bal:i-e}}
+function opex(m){m=m||new Date().toISOString().slice(0,7);const rows=ox.months[m]||[];const st={e:sum(rows,'amount')};
+ app.innerHTML=`<div class="box"><div class="row" style="justify-content:space-between"><h3 style="margin:0">월 운영지출</h3><div class="row"><input type="month" id="om" value="${m}" style="width:auto"></div></div>
+ <p class="muted">급여 지급일: 매월 말일.</p>
+ <div class="cards"><div class="card"><div class="l">${m} 지출 합계</div><div class="v">${won(st.e)}</div></div></div>
+ <b>${m} 지출 내역</b><table class="exp"><tr><th>항목</th><th>받는사람</th><th class="n">금액</th><th>비고 (지급일 선택)</th><th></th></tr><tbody id="orows">${rows.map((r,i)=>`<tr><td><input data-i=${i} data-f=name value="${esc(r.name)}"></td><td><input data-i=${i} data-f=to value="${esc(r.to)}"></td><td><input class=num inputmode=numeric style="text-align:right" data-i=${i} data-f=amount value="${fmt(r.amount)}"></td><td><div class="row" style="flex-wrap:nowrap"><input data-i=${i} data-f=memo value="${esc(r.memo)}"><input type=date style="width:auto" data-i=${i} data-f=date value="${esc(r.date)}"></div></td><td><button class="del" data-x=${i}>✕</button></td></tr>`).join('')}</tbody>
+ <tr class="tot"><td colspan=2>합계</td><td class="n" id="osum">${won(st.e)}</td><td colspan=2></td></tr></table>
+ <div class="row noprint" style="margin-top:8px"><button class="sub btn-s" id="oadd">+ 지출 추가</button><button class="btn-s" id="ofix">고정 항목 불러오기 (${won(sum(ox.fixed,'amount'))})</button></div></div>
+ <div class="box"><b>고정 운영비 항목 (월 기준)</b><table class="exp"><tr><th>항목</th><th>받는사람</th><th class="n">금액</th><th>비고</th><th></th></tr><tbody id="frows">${ox.fixed.map((r,i)=>`<tr><td><input data-i=${i} data-f=name value="${esc(r.name)}"></td><td><input data-i=${i} data-f=to value="${esc(r.to)}"></td><td><input class=num inputmode=numeric style="text-align:right" data-i=${i} data-f=amount value="${fmt(r.amount)}"></td><td><input data-i=${i} data-f=memo value="${esc(r.memo)}"></td><td><button class="del" data-x=${i}>✕</button></td></tr>`).join('')}</tbody>
+ <tr class="tot"><td colspan=2>합계</td><td class="n">${won(sum(ox.fixed,'amount'))}</td><td colspan=2></td></tr></table><button class="sub btn-s noprint" id="fadd" style="margin-top:8px">+ 고정 항목 추가</button></div>`;
+ const re=()=>{saveO();opex(m)};
+ document.getElementById('om').onchange=e=>go('opex',e.target.value);
+ const or=document.getElementById('orows');or.onchange=e=>{const d=e.target.dataset;if(d.f){rows[d.i][d.f]=d.f=='amount'?num(e.target.value):e.target.value;ox.months[m]=rows;re()}};
+ or.onclick=e=>{if(e.target.dataset.x!=null){rows.splice(+e.target.dataset.x,1);ox.months[m]=rows;if(!rows.length)delete ox.months[m];re()}};
+ document.getElementById('oadd').onclick=()=>{rows.push({name:'',to:'',amount:0,date:'',memo:''});ox.months[m]=rows;re()};
+ document.getElementById('ofix').onclick=()=>{if(rows.length&&!confirm('고정 항목을 추가할까요? (기존 내역 유지)'))return;ox.fixed.forEach(f=>rows.push({name:f.name,to:f.to||'',amount:f.amount,date:f.name.includes('급여')?lastDay(m):'',memo:f.memo||(f.name.includes('급여')?'매월 말일 지급':'')}));ox.months[m]=rows;re()};
+ const fr=document.getElementById('frows');fr.onchange=e=>{const d=e.target.dataset;if(d.f){ox.fixed[d.i][d.f]=d.f=='amount'?num(e.target.value):e.target.value;re()}};
+ fr.onclick=e=>{if(e.target.dataset.x!=null){ox.fixed.splice(+e.target.dataset.x,1);re()}};
+ document.getElementById('fadd').onclick=()=>{ox.fixed.push({name:'',to:'',amount:0,memo:''});re()}}
 document.querySelectorAll('nav [data-v]').forEach(b=>b.onclick=()=>go(b.dataset.v));
-document.getElementById('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));a.download='smartfarm-settlement-'+new Date().toISOString().slice(0,10)+'.json';a.click()};
+document.getElementById('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({version:2,contracts:db,opex:ox},null,2)],{type:'application/json'}));a.download='smartfarm-settlement-'+new Date().toISOString().slice(0,10)+'.json';a.click()};
 document.getElementById('imp').onclick=()=>document.getElementById('file').click();
-document.getElementById('file').onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{const d=JSON.parse(t);if(!Array.isArray(d))throw 0;if(confirm(d.length+'건을 불러옵니다. 현재 데이터는 대체됩니다.')){db=d;save();route()}}catch(x){alert('올바른 백업 파일이 아니에요')}});e.target.value=''};
+document.getElementById('file').onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{const j=JSON.parse(t),d=Array.isArray(j)?j:j.contracts;if(!Array.isArray(d))throw 0;if(confirm(d.length+'건을 불러옵니다. 현재 데이터는 대체됩니다.')){db=d;save();if(j.opex&&j.opex.fixed){ox=migrateO(j.opex);saveO()}route()}}catch(x){alert('올바른 백업 파일이 아니에요')}});e.target.value=''};
 window.onhashchange=route;route();
 </script></body></html>
