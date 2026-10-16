@@ -27,8 +27,8 @@ nav button.hot{background:#12301c;border-color:#12301c;color:#fff;font-weight:70
 @media print{header,.noprint{display:none!important}body{background:#fff}.box{box-shadow:none;padding:0}main{padding:0}}
 </style></head><body>
 <header><h1>🌱 정우스마트팜 계약 정산</h1><nav class="noprint">
-<button data-v="dash" class="on">대시보드</button><button data-v="opex">월 운영지출</button><button data-v="trade" class="hot">버섯 거래</button>
-<button class="sub" id="exp">백업 내보내기</button><button class="sub" id="imp">불러오기</button><input type="file" id="file" accept=".json" hidden=""></nav></header>
+<button data-v="dash" class="on">홈</button><button data-v="opex">월 운영지출</button><button data-v="trade" class="hot">버섯 거래</button>
+</nav></header>
 <main id="app"></main>
 <button class="fab noprint" id="ledgerFab" onclick="go('ledger')">이승윤 적립 장부</button>
 <script type="text/plain" id="tradeSrc"><!DOCTYPE html>
@@ -293,12 +293,12 @@ function tog(id,b){const e=document.getElementById('d-'+id);const o=e.hidden;e.h
 function all(){app.innerHTML=`<h3>계약 상세 (${db.length}건)</h3>`+sorted().map(c=>`<div class="box ccard"><div class="row" style="justify-content:space-between"><b>${esc(c.name)} <span class="muted">${esc(c.date)} · ${esc(c.client)}</span></b><span class="noprint"><button class="sub btn-s" onclick="go('view','${c.id}')">정산서</button> <button class="sub btn-s" onclick="go('edit','${c.id}')">수정</button></span></div>${detHTML(c)}</div>`).join('')+`<button class="sub noprint" onclick="print()">전체 인쇄</button>`}
 function dash(){let t={income:0,net:0,park:0,lee:0,ops:0},q={receivable:0,pending:0,parkLeft:0};sorted().forEach(c=>{const r=calc(c),f=flow(c);for(k in t)t[k]+=r[k];for(k in q)q[k]+=f[k]});
  app.innerHTML=`<div class="cards"><div class="card hl"><div class="l">총 매출액 (계약금액 합계)</div><div class="v">${won(t.income)}</div></div>
- <div class="card"><div class="l">총 계약 수</div><div class="v">${db.length}건</div></div><div class="card"><div class="l">이승윤 누적 적립금 (엑시트 시 전액 지급)</div><div class="v">${won(t.lee)}</div></div>
+ <div class="card"><div class="l">총 계약 수</div><div class="v">${db.length}건</div></div>
  <div class="card"><div class="l">총 순이익</div><div class="v">${won(t.net)}</div></div><div class="card"><div class="l">박세원 누적 수당</div><div class="v">${won(t.park)}</div></div>
  <div class="card"><div class="l">운영비 누적 (정우팜 귀속)</div><div class="v">${won(t.ops)}</div></div><div class="card"><div class="l">박세원 잔여 지급액</div><div class="v">${won(q.parkLeft)}</div></div><div class="card"><div class="l">미수금 합계</div><div class="v" style="color:#b33">${won(q.receivable)}</div></div><div class="card"><div class="l">입금 예정 합계</div><div class="v" style="color:#b36b00">${won(q.pending)}</div></div></div>
  <div class="box"><b>계약 건 목록</b>
- <table><tr><th>계약일</th><th>건명</th><th class="n hide-m">입금</th><th class="n hide-m">지출</th><th class="n">순이익</th><th class="n">이승윤 적립</th><th></th></tr>
- ${sorted().map(c=>{const r=calc(c);return`<tr><td><button class="tg btn-s" onclick="tog('${c.id}',this)">▼</button> ${esc(c.date)}</td><td>${esc(c.name)}</td><td class="n hide-m">${won(r.income)}</td><td class="n hide-m">${won(r.exp)}</td><td class="n">${won(r.net)}</td><td class="n">${won(r.lee)}</td><td><button class="btn-s" onclick="go('view','${c.id}')">상세보기</button></td></tr><tr id="d-${c.id}" hidden><td colspan=7>${detHTML(c)}</td></tr>`}).join('')||'<tr><td colspan=7 class="muted">계약 건이 없어요.</td></tr>'}</table></div>`}
+ <table><tr><th>계약일</th><th>건명</th><th class="n hide-m">입금</th><th class="n hide-m">지출</th><th class="n">순이익</th><th></th></tr>
+ ${sorted().map(c=>{const r=calc(c);return`<tr><td><button class="tg btn-s" onclick="tog('${c.id}',this)">▼</button> ${esc(c.date)}</td><td>${esc(c.name)}</td><td class="n hide-m">${won(r.income)}</td><td class="n hide-m">${won(r.exp)}</td><td class="n">${won(r.net)}</td><td><button class="btn-s" onclick="go('view','${c.id}')">상세보기</button></td></tr><tr id="d-${c.id}" hidden><td colspan=6>${detHTML(c)}</td></tr>`}).join('')||'<tr><td colspan=6 class="muted">계약 건이 없어요.</td></tr>'}</table></div>`}
 function ledger(){let cum=0;app.innerHTML=`<div class="box"><h3>이승윤 수당 적립 장부</h3><p class="muted">순이익의 33%를 적립하며, 정우팜 엑시트 시 적립금 전액을 지급합니다.</p>
  <table><tr><th>계약일</th><th>건명</th><th class="n">순이익</th><th class="n">적립액(33%)</th><th class="n">누적 적립액</th></tr>
  ${sorted().map(c=>{const r=calc(c);cum+=r.lee;return`<tr class="click" onclick="go('view','${c.id}')"><td>${esc(c.date)}</td><td>${esc(c.name)}</td><td class="n">${won(r.net)}</td><td class="n">${won(r.lee)}</td><td class="n"><b>${won(cum)}</b></td></tr>`}).join('')}
@@ -400,9 +400,6 @@ function opex(m){m=m||new Date().toISOString().slice(0,7);const rows=ox.months[m
  fr.onclick=e=>{if(e.target.dataset.x!=null){ox.fixed.splice(+e.target.dataset.x,1);re()}};
  document.getElementById('fadd').onclick=()=>{ox.fixed.push({name:'',to:'',job:'',amount:0,memo:''});re()}}
 document.querySelectorAll('nav [data-v]').forEach(b=>b.onclick=()=>go(b.dataset.v));
-document.getElementById('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({version:2,contracts:db,opex:ox},null,2)],{type:'application/json'}));a.download='smartfarm-settlement-'+new Date().toISOString().slice(0,10)+'.json';a.click()};
-document.getElementById('imp').onclick=()=>document.getElementById('file').click();
-document.getElementById('file').onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{const j=JSON.parse(t),d=Array.isArray(j)?j:j.contracts;if(!Array.isArray(d))throw 0;if(confirm(d.length+'건을 불러옵니다. 현재 데이터는 대체됩니다.')){db=d;save();if(j.opex&&j.opex.fixed){ox=migrateO(j.opex);saveO()}route()}}catch(x){alert('올바른 백업 파일이 아니에요')}});e.target.value=''};
 window.onhashchange=route;route();
 </script>
 </body></html>
