@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>정우스마트팜 정산</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo",system-ui,sans-serif;background:#f3f6f2;color:#1f2a1f}
@@ -23,8 +23,8 @@ label{display:block;font-size:13px;color:#556;margin:8px 0 3px}input,textarea{fo
 @media print{header,.noprint{display:none!important}body{background:#fff}.box{box-shadow:none;padding:0}main{padding:0}}
 </style></head><body>
 <header><h1>🌱 정우스마트팜 계약 정산</h1><nav class="noprint">
-<button data-v="dash">대시보드</button><button data-v="opex">월 운영지출</button><button data-v="ledger">이승윤 적립 장부</button><button data-v="edit">+ 새 계약</button>
-<button class="sub" id="exp">백업 내보내기</button><button class="sub" id="imp">불러오기</button><input type="file" id="file" accept=".json" hidden></nav></header>
+<button data-v="dash" class="on">대시보드</button><button data-v="opex">월 운영지출</button><button data-v="ledger">이승윤 적립 장부</button><button data-v="edit">+ 새 계약</button>
+<button class="sub" id="exp">백업 내보내기</button><button class="sub" id="imp">불러오기</button><input type="file" id="file" accept=".json" hidden=""></nav></header>
 <main id="app"></main>
 <script>
 const KEY='jw-smartfarm-settlement-v1';
@@ -136,37 +136,55 @@ function edit(id){const c=id?JSON.parse(JSON.stringify(db.find(x=>x.id==id)||{})
   c.income=num(c.income);c.items=c.items.filter(i=>i.name||num(i.price)).map(i=>({...i,price:num(i.price),qty:i.qty===''?1:num(i.qty)}));for(const k in LS)c[k]=(c[k]||[]).filter(x=>num(x.amount)).map(x=>({...x,amount:num(x.amount)}));
   if(id)db[db.findIndex(x=>x.id==id)]=c;else{c.id='c'+Date.now().toString(36);db.push(c)}save();go('view',c.id)};draw();lists(c)}
 const OKEY='jw-smartfarm-opex-v1';
-const FIXED=[['급여','박광호',3250000],['급여','이승윤',3250000],['이사 급여','김선아',3000000],['안성공장 월세','',2500000],['법인사무실 월세','',290000],['수매차량 유지비','',1000000],['마케팅비','',2000000],['잡비','',3000000]].map(([name,to,amount])=>({name,to,amount,memo:''}));
+const JOB={'이승윤':'정우팜 서류업무 일체','박광호':'안성공장 택배발송 및 수매','김선아':'배지공급 및 생육 교육 일체'};
+const FIXED=[['급여','박광호',3250000],['급여','이승윤',3250000],['이사 급여','김선아',3000000],['안성공장 월세','',2500000],['법인사무실 월세','',290000],['수매차량 유지비','',1000000]].map(([name,to,amount])=>({name,to,job:JOB[to]||'',amount,memo:''}));
+const NOFEE='정우시스템으로부터 수수료 지급 못 받음',NEED='금액 입력 필요';
+const R=(name,to,job,amount,date,memo)=>({name,to,job,amount,date,memo});
+const SEED_MONTHS={
+ '2026-10':[R('급여','이승윤','정우팜 서류업무 일체',3000000,'2026-10-31',NOFEE),R('급여','박광호','안성공장 택배발송 및 수매(아직 없음)',3000000,'2026-10-31',NOFEE),
+  R('이사 급여','김선아','배지공급 및 생육 교육 일체',3000000,'2026-10-31',NOFEE),R('안성공장 월세','','',2500000,'2026-10-31','현재 개인 명의 계약 → 법인 재계약 필요'),
+  R('법인사무실 월세','','',290000,'2026-10-31',''),R('법무사 비용','법무사','',0,'','법인 설립 비용 · '+NEED),
+  R('선물세트 포장 테스트 300개','포장업체','',3500000,'','개당 약 11,600원 · VAT 포함 여부 확인')],
+ '2026-11':[R('급여','이승윤','정우팜 서류업무 일체',3250000,'2026-11-30','매월 말일 지급'),R('급여','박광호','안성공장 택배발송 및 수매',3250000,'2026-11-30','매월 말일 지급'),
+  R('이사 급여','김선아','배지공급 및 생육 교육 일체',3000000,'2026-11-30','매월 말일 지급'),R('사무보조 직원 기본급','신규 직원(4대보험)','회사 전반 사무업무 보조',0,'2026-11-30','식대·차량유지비 별도 · '+NEED),
+  R('사무보조 직원 4대보험 회사부담분','공단','',0,'2026-12-10',NEED),R('안성공장 월세','','',2500000,'2026-11-30',''),R('법인사무실 월세','','',290000,'2026-11-30',''),
+  R('수매차량 유지비','','',1000000,'',''),R('농기계 등록 신청 비용','대행/인증기관','',3000000,'','11월 신청 · 약 300만원(±50만원)'),
+  R('선물세트 포장 디자인','디자이너','',0,'','포장 브랜딩 디자인 · '+NEED)]};
+const OPEX_VER=3;
 const SPLIT={'박광호 급여':['급여','박광호'],'이승윤 급여':['급여','이승윤'],'김선아 이사 급여':['이사 급여','김선아']};
-const splitRow=r=>{if(r.to===undefined){const sp=SPLIT[r.name];r.to=sp?sp[1]:'';if(sp)r.name=sp[0]}if(r.memo===undefined)r.memo='';return r};
-function migrateO(o){o.fixed.forEach(splitRow);Object.values(o.months||{}).forEach(a=>a.forEach(splitRow));if(!o.fixed.some(f=>f.name=='법인사무실 월세')){const i=o.fixed.findIndex(f=>f.name=='안성공장 월세');o.fixed.splice(i<0?o.fixed.length:i+1,0,{name:'법인사무실 월세',to:'',amount:290000,memo:''})}return o}
+const splitRow=r=>{if(r.to===undefined){const sp=SPLIT[r.name];r.to=sp?sp[1]:'';if(sp)r.name=sp[0]}if(r.memo===undefined)r.memo='';if(r.job===undefined)r.job=JOB[r.to]&&r.name.includes('급여')?JOB[r.to]:'';return r};
+function migrateO(o){o.fixed.forEach(splitRow);Object.values(o.months||{}).forEach(a=>a.forEach(splitRow));if(!o.fixed.some(f=>f.name=='법인사무실 월세')){const i=o.fixed.findIndex(f=>f.name=='안성공장 월세');o.fixed.splice(i<0?o.fixed.length:i+1,0,{name:'법인사무실 월세',to:'',job:'',amount:290000,memo:''})}
+ if((o.v||1)<OPEX_VER){o.fixed=o.fixed.filter(f=>f.name!='잡비'&&f.name!='마케팅비');o.months=o.months||{};
+  for(const m in SEED_MONTHS)if(!(o.months[m]||[]).length)o.months[m]=JSON.parse(JSON.stringify(SEED_MONTHS[m]));o.v=OPEX_VER}
+ return o}
 let ox;try{ox=JSON.parse(localStorage.getItem(OKEY))}catch(e){}if(!ox||!ox.fixed)ox={fixed:JSON.parse(JSON.stringify(FIXED)),months:{}};migrateO(ox);
 function saveO(){localStorage.setItem(OKEY,JSON.stringify(ox))}saveO();
 const ym=d=>(d||'').slice(0,7),lastDay=m=>{const[y,mm]=m.split('-').map(Number);return m+'-'+String(new Date(y,mm,0).getDate()).padStart(2,'0')};
 function inflow(m){return db.filter(c=>ym(c.date)==m).reduce((s,c)=>s+calc(c).ops,0)}
 function opexMonths(){return[...new Set([...Object.keys(ox.months),...db.map(c=>ym(c.date)).filter(Boolean)])].sort()}
 function monthStat(m){const e=sum(ox.months[m],'amount'),i=inflow(m);return{i,e,bal:i-e}}
-function opex(m){m=m||new Date().toISOString().slice(0,7);const rows=ox.months[m]||[];const st={e:sum(rows,'amount')};
+function opex(m){m=m||new Date().toISOString().slice(0,7);const rows=ox.months[m]||[];const st={e:sum(rows,'amount'),i:inflow(m)};
  app.innerHTML=`<div class="box"><div class="row" style="justify-content:space-between"><h3 style="margin:0">월 운영지출</h3><div class="row"><input type="month" id="om" value="${m}" style="width:auto"></div></div>
  <p class="muted">급여 지급일: 매월 말일.</p>
- <div class="cards"><div class="card"><div class="l">${m} 지출 합계</div><div class="v">${won(st.e)}</div></div></div>
- <b>${m} 지출 내역</b><table class="exp"><tr><th>항목</th><th>받는사람</th><th class="n">금액</th><th>비고 (지급일 선택)</th><th></th></tr><tbody id="orows">${rows.map((r,i)=>`<tr><td><input data-i=${i} data-f=name value="${esc(r.name)}"></td><td><input data-i=${i} data-f=to value="${esc(r.to)}"></td><td><input class=num inputmode=numeric style="text-align:right" data-i=${i} data-f=amount value="${fmt(r.amount)}"></td><td><div class="row" style="flex-wrap:nowrap"><input data-i=${i} data-f=memo value="${esc(r.memo)}"><input type=date style="width:auto" data-i=${i} data-f=date value="${esc(r.date)}"></div></td><td><button class="del" data-x=${i}>✕</button></td></tr>`).join('')}</tbody>
- <tr class="tot"><td colspan=2>합계</td><td class="n" id="osum">${won(st.e)}</td><td colspan=2></td></tr></table>
+ <div class="cards"><div class="card"><div class="l">${m} 운영비 유입 (계약건 34%)</div><div class="v">${won(st.i)}</div></div><div class="card"><div class="l">${m} 지출 합계</div><div class="v">${won(st.e)}</div></div></div>
+ <b>${m} 지출 내역</b><table class="exp"><tr><th>항목</th><th>받는사람</th><th>업무</th><th class="n">금액</th><th>비고 (지급일 선택)</th><th></th></tr><tbody id="orows">${rows.map((r,i)=>`<tr><td><input data-i=${i} data-f=name value="${esc(r.name)}"></td><td><input data-i=${i} data-f=to value="${esc(r.to)}"></td><td><input data-i=${i} data-f=job value="${esc(r.job)}"></td><td><input class=num inputmode=numeric style="text-align:right" data-i=${i} data-f=amount value="${fmt(r.amount)}"></td><td><div class="row" style="flex-wrap:nowrap"><input data-i=${i} data-f=memo value="${esc(r.memo)}"><input type=date style="width:auto" data-i=${i} data-f=date value="${esc(r.date)}"></div></td><td><button class="del" data-x=${i}>✕</button></td></tr>`).join('')}</tbody>
+ <tr class="tot"><td colspan=3>합계</td><td class="n" id="osum">${won(st.e)}</td><td colspan=2></td></tr></table>
  <div class="row noprint" style="margin-top:8px"><button class="sub btn-s" id="oadd">+ 지출 추가</button><button class="btn-s" id="ofix">고정 항목 불러오기 (${won(sum(ox.fixed,'amount'))})</button></div></div>
- <div class="box"><b>고정 운영비 항목 (월 기준)</b><table class="exp"><tr><th>항목</th><th>받는사람</th><th class="n">금액</th><th>비고</th><th></th></tr><tbody id="frows">${ox.fixed.map((r,i)=>`<tr><td><input data-i=${i} data-f=name value="${esc(r.name)}"></td><td><input data-i=${i} data-f=to value="${esc(r.to)}"></td><td><input class=num inputmode=numeric style="text-align:right" data-i=${i} data-f=amount value="${fmt(r.amount)}"></td><td><input data-i=${i} data-f=memo value="${esc(r.memo)}"></td><td><button class="del" data-x=${i}>✕</button></td></tr>`).join('')}</tbody>
- <tr class="tot"><td colspan=2>합계</td><td class="n">${won(sum(ox.fixed,'amount'))}</td><td colspan=2></td></tr></table><button class="sub btn-s noprint" id="fadd" style="margin-top:8px">+ 고정 항목 추가</button></div>`;
+ <div class="box"><b>고정 운영비 항목 (월 기준)</b><table class="exp"><tr><th>항목</th><th>받는사람</th><th>업무</th><th class="n">금액</th><th>비고</th><th></th></tr><tbody id="frows">${ox.fixed.map((r,i)=>`<tr><td><input data-i=${i} data-f=name value="${esc(r.name)}"></td><td><input data-i=${i} data-f=to value="${esc(r.to)}"></td><td><input data-i=${i} data-f=job value="${esc(r.job)}"></td><td><input class=num inputmode=numeric style="text-align:right" data-i=${i} data-f=amount value="${fmt(r.amount)}"></td><td><input data-i=${i} data-f=memo value="${esc(r.memo)}"></td><td><button class="del" data-x=${i}>✕</button></td></tr>`).join('')}</tbody>
+ <tr class="tot"><td colspan=3>합계</td><td class="n">${won(sum(ox.fixed,'amount'))}</td><td colspan=2></td></tr></table><button class="sub btn-s noprint" id="fadd" style="margin-top:8px">+ 고정 항목 추가</button></div>`;
  const re=()=>{saveO();opex(m)};
  document.getElementById('om').onchange=e=>go('opex',e.target.value);
  const or=document.getElementById('orows');or.onchange=e=>{const d=e.target.dataset;if(d.f){rows[d.i][d.f]=d.f=='amount'?num(e.target.value):e.target.value;ox.months[m]=rows;re()}};
  or.onclick=e=>{if(e.target.dataset.x!=null){rows.splice(+e.target.dataset.x,1);ox.months[m]=rows;if(!rows.length)delete ox.months[m];re()}};
- document.getElementById('oadd').onclick=()=>{rows.push({name:'',to:'',amount:0,date:'',memo:''});ox.months[m]=rows;re()};
- document.getElementById('ofix').onclick=()=>{if(rows.length&&!confirm('고정 항목을 추가할까요? (기존 내역 유지)'))return;ox.fixed.forEach(f=>rows.push({name:f.name,to:f.to||'',amount:f.amount,date:f.name.includes('급여')?lastDay(m):'',memo:f.memo||(f.name.includes('급여')?'매월 말일 지급':'')}));ox.months[m]=rows;re()};
+ document.getElementById('oadd').onclick=()=>{rows.push({name:'',to:'',job:'',amount:0,date:'',memo:''});ox.months[m]=rows;re()};
+ document.getElementById('ofix').onclick=()=>{if(rows.length&&!confirm('고정 항목을 추가할까요? (기존 내역 유지)'))return;ox.fixed.forEach(f=>rows.push({name:f.name,to:f.to||'',job:f.job||'',amount:f.amount,date:f.name.includes('급여')?lastDay(m):'',memo:f.memo||(f.name.includes('급여')?'매월 말일 지급':'')}));ox.months[m]=rows;re()};
  const fr=document.getElementById('frows');fr.onchange=e=>{const d=e.target.dataset;if(d.f){ox.fixed[d.i][d.f]=d.f=='amount'?num(e.target.value):e.target.value;re()}};
  fr.onclick=e=>{if(e.target.dataset.x!=null){ox.fixed.splice(+e.target.dataset.x,1);re()}};
- document.getElementById('fadd').onclick=()=>{ox.fixed.push({name:'',to:'',amount:0,memo:''});re()}}
+ document.getElementById('fadd').onclick=()=>{ox.fixed.push({name:'',to:'',job:'',amount:0,memo:''});re()}}
 document.querySelectorAll('nav [data-v]').forEach(b=>b.onclick=()=>go(b.dataset.v));
 document.getElementById('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({version:2,contracts:db,opex:ox},null,2)],{type:'application/json'}));a.download='smartfarm-settlement-'+new Date().toISOString().slice(0,10)+'.json';a.click()};
 document.getElementById('imp').onclick=()=>document.getElementById('file').click();
 document.getElementById('file').onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{const j=JSON.parse(t),d=Array.isArray(j)?j:j.contracts;if(!Array.isArray(d))throw 0;if(confirm(d.length+'건을 불러옵니다. 현재 데이터는 대체됩니다.')){db=d;save();if(j.opex&&j.opex.fixed){ox=migrateO(j.opex);saveO()}route()}}catch(x){alert('올바른 백업 파일이 아니에요')}});e.target.value=''};
 window.onhashchange=route;route();
-</script></body></html>
+</script>
+</body></html>
