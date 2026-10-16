@@ -19,13 +19,226 @@ label{display:block;font-size:13px;color:#556;margin:8px 0 3px}input,textarea{fo
 .exp td input{padding:5px}.tot td{font-weight:700;background:#f7faf6}.muted{color:#778;font-size:13px}
 .det{background:#f9fbf8;border-left:4px solid #2f6b3a;padding:10px 14px;font-size:13.5px}.det h5{margin:8px 0 4px;color:#2f6b3a}.det table{background:#fff}.tg{background:#fff;color:#2f6b3a;padding:3px 9px}.btn-s{padding:4px 10px;font-size:13px}.ccard{margin-bottom:14px}
 .doc h2{text-align:center;letter-spacing:4px}
+nav button.hot{background:#12301c;border-color:#12301c;color:#fff;font-weight:700}nav button.hot.on{background:#fff;color:#12301c;border-color:#fff}
+.fab{position:fixed;right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));padding:5px 11px;font-size:12.5px;border-radius:99px;background:#fff;color:#2f6b3a;box-shadow:0 2px 8px #0002;z-index:20}
+.fab.on{background:#2f6b3a;color:#fff}
+.tradeframe{width:100%;border:0;display:block;min-height:600px;border-radius:10px}
 @media(max-width:640px){.grid2{grid-template-columns:1fr}.card.hl{grid-column:auto}table{font-size:12.5px}.hide-m{display:none}}
 @media print{header,.noprint{display:none!important}body{background:#fff}.box{box-shadow:none;padding:0}main{padding:0}}
 </style></head><body>
 <header><h1>🌱 정우스마트팜 계약 정산</h1><nav class="noprint">
-<button data-v="dash" class="on">대시보드</button><button data-v="opex">월 운영지출</button><button data-v="ledger">이승윤 적립 장부</button><button data-v="edit">+ 새 계약</button>
+<button data-v="dash" class="on">대시보드</button><button data-v="opex">월 운영지출</button><button data-v="trade" class="hot">버섯 거래</button>
 <button class="sub" id="exp">백업 내보내기</button><button class="sub" id="imp">불러오기</button><input type="file" id="file" accept=".json" hidden=""></nav></header>
 <main id="app"></main>
+<button class="fab noprint" id="ledgerFab" onclick="go('ledger')">이승윤 적립 장부</button>
+<script type="text/plain" id="tradeSrc"><!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>정우팜 버섯 거래 구조</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* Layout: one reading column — 구조도 → 등급별 단가표 → 경유 손익 계산기 */
+:root{
+  --bg:#f2f4f1; --surface:#ffffff; --line:#d9dfd8; --fg:#1d2620; --muted:#5f6b63;
+  --pine:#2e5e45; --pine-soft:#e3ede6; --amber:#9a6a12; --amber-soft:#f7eedb;
+  --loss:#b23a2e; --loss-soft:#f8e3e0; --zero:#7a847d;
+  --f-display:"Gothic A1","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141a16; --surface:#1c241f; --line:#2f3a33; --fg:#e6ece7; --muted:#9aa69e;
+  --pine:#7cc39b; --pine-soft:#22382b; --amber:#e2b55a; --amber-soft:#3a2f1a;
+  --loss:#f08273; --loss-soft:#3d2320; --zero:#8a948d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a16; --surface:#1c241f; --line:#2f3a33; --fg:#e6ece7; --muted:#9aa69e;
+  --pine:#7cc39b; --pine-soft:#22382b; --amber:#e2b55a; --amber-soft:#3a2f1a;
+  --loss:#f08273; --loss-soft:#3d2320; --zero:#8a948d; color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.6}
+.wrap{max-width:880px;margin:0 auto;padding-block:32px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:28px}
+h1,h2{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(26px,5vw,34px);font-weight:800}
+h2{font-size:19px;font-weight:700}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--pine);text-transform:uppercase}
+.lead{color:var(--muted);max-width:62ch;margin:6px 0 0}
+section{display:flex;flex-direction:column;gap:12px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+.scroll{overflow-x:auto}
+svg text{font-family:var(--f-body)}
+.rule{display:flex;gap:12px;align-items:flex-start;background:var(--loss-soft);border-radius:8px;padding:12px 14px}
+.rule b{color:var(--loss)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;min-width:560px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{font-size:12.5px;font-weight:600;color:var(--muted);vertical-align:bottom;white-space:normal}
+tbody td:first-child{font-weight:600}
+.g{display:inline-block;min-width:34px;padding:1px 8px;border-radius:99px;background:var(--pine-soft);color:var(--pine);font-size:13px;text-align:center}
+.pos{color:var(--amber);font-weight:600}.neg{color:var(--loss);font-weight:600}.zer{color:var(--zero)}
+.note{font-size:13px;color:var(--muted);margin:0}
+.calc td{padding:8px 12px}
+.calc input{font:inherit;width:96px;padding:6px 8px;text-align:right;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);font-variant-numeric:tabular-nums}
+.calc input:focus-visible{outline:2px solid var(--pine);outline-offset:1px}
+.calc tfoot td{font-weight:700;border-bottom:0;padding-top:12px}
+.sum{display:flex;flex-wrap:wrap;gap:10px}
+.chip{flex:1 1 180px;min-width:0;border-radius:8px;padding:10px 14px;background:var(--pine-soft)}
+.chip .l{font-size:12.5px;color:var(--muted)}.chip .v{font-family:var(--f-display);font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.chip.amber{background:var(--amber-soft)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{font:inherit;font-size:14px;border:0;background:transparent;color:var(--muted);padding:7px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--pine);color:var(--surface);font-weight:600}
+.seg button:focus-visible{outline:2px solid var(--pine);outline-offset:-2px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.cond{background:var(--amber-soft);border-radius:8px;padding:10px 14px;font-size:14px}
+</style>
+</head><body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">참송이버섯 · 3사 거래</div>
+    <h1>정우팜 버섯 거래 구조</h1>
+    <p class="lead">정우팜, 정우시스템, 성거산(김선아 이사) 세 회사가 버섯을 사고파는 관계와 등급별 단가입니다. 모든 금액은 1kg 기준입니다. 정우시스템 버섯이 성거산으로 갈 때는 반드시 정우팜을 거칩니다.</p>
+  </header>
+
+  <section>
+    <h2>거래 흐름</h2>
+    <div class="panel scroll">
+      <svg viewBox="0 0 720 300" width="100%" role="img" aria-label="정우시스템과 정우팜은 같은 단가로 서로 사고팔고, 정우팜과 성거산도 서로 사고팔되 단가가 다르다. 정우시스템과 성거산은 직거래하지 않는다." style="min-width:520px;display:block">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="var(--pine)"/></marker>
+          <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="var(--amber)"/></marker>
+        </defs>
+        
+        <g>
+          <rect x="20" y="40" width="170" height="74" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
+          <text x="105" y="72" text-anchor="middle" font-size="17" font-weight="700" fill="var(--fg)">정우시스템</text>
+          <text x="105" y="96" text-anchor="middle" font-size="12.5" fill="var(--muted)">기존 법인</text>
+        </g>
+        <g>
+          <rect x="275" y="30" width="170" height="94" rx="10" fill="var(--pine-soft)" stroke="var(--pine)" stroke-width="2"/>
+          <text x="360" y="68" text-anchor="middle" font-size="18" font-weight="800" fill="var(--pine)">정우팜</text>
+          <text x="360" y="92" text-anchor="middle" font-size="12.5" fill="var(--muted)">모든 거래의 중간</text>
+        </g>
+        <g>
+          <rect x="530" y="40" width="170" height="74" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
+          <text x="615" y="72" text-anchor="middle" font-size="17" font-weight="700" fill="var(--fg)">성거산</text>
+          <text x="615" y="96" text-anchor="middle" font-size="12.5" fill="var(--muted)">김선아 이사</text>
+        </g>
+        
+        <line x1="194" y1="66" x2="271" y2="66" stroke="var(--pine)" stroke-width="2" marker-end="url(#ah)"/>
+        <line x1="271" y1="90" x2="194" y2="90" stroke="var(--pine)" stroke-width="2" marker-end="url(#ah)"/>
+        <text x="232" y="22" text-anchor="middle" font-size="12" fill="var(--pine)" font-weight="600">양방향 · 같은 단가</text>
+        
+        <line x1="449" y1="66" x2="526" y2="66" stroke="var(--amber)" stroke-width="2.5" marker-end="url(#ah2)"/>
+        <line x1="526" y1="90" x2="449" y2="90" stroke="var(--amber)" stroke-width="2.5" marker-end="url(#ah2)"/>
+        <text x="488" y="22" text-anchor="middle" font-size="12" fill="var(--amber)" font-weight="600">양방향 · 단가 다름</text>
+        
+        <path d="M105,118 C105,230 615,230 615,118" fill="none" stroke="var(--loss)" stroke-width="2" stroke-dasharray="6 6"/>
+        <circle cx="360" cy="201" r="15" fill="var(--loss-soft)" stroke="var(--loss)" stroke-width="2"/>
+        <path d="M352,193L368,209M368,193L352,209" stroke="var(--loss)" stroke-width="2.5" stroke-linecap="round"/>
+        <text x="360" y="245" text-anchor="middle" font-size="13" font-weight="700" fill="var(--loss)">정우시스템 → 성거산 직거래 불가</text>
+        <text x="360" y="266" text-anchor="middle" font-size="12" fill="var(--muted)">반드시 정우팜을 거쳐서 판매</text>
+      </svg>
+    </div>
+    <div class="rule"><div><b>정우시스템은 성거산(김선아 이사)에 직접 팔 수 없습니다.</b> 정우시스템 버섯은 정우팜이 사서 성거산에 다시 팝니다.</div></div>
+  </section>
+
+  <section>
+    <h2>등급별 단가 (원/kg)</h2>
+    <div class="panel scroll">
+      <table>
+        <thead><tr>
+          <th>등급</th>
+          <th>정우팜 ⇄ 정우시스템<br>서로 살 때 (같은 값)</th>
+          <th>성거산이 정우팜에서<br>살 때</th>
+          <th>정우팜이 성거산에서<br>살 때</th>
+          <th>정우팜 경유 차익<br>(정우시스템 → 성거산)</th>
+        </tr></thead>
+        <tbody id="price"></tbody>
+      </table>
+    </div>
+    <div class="cond"><b>선별 조건</b> · 정우팜이 정우시스템 버섯을 살 때 정우시스템은 선별해서 넘깁니다. 선별하지 않고 넘기면 kg당 1,000원을 선별비로 빼고 정산합니다.</div>
+    <p class="note">경유 차익은 정우시스템 버섯(선별 완료)을 정우팜이 사서 성거산에 넘길 때 정우팜에 남는 kg당 금액입니다. 미선별이면 kg당 1,000원이 더 남습니다. 박스비·운송비는 빠져 있습니다.</p>
+  </section>
+
+  <section>
+    <h2>경유 거래 손익 계산</h2>
+    <p class="lead" style="margin:0">정우시스템 버섯을 정우팜이 사서 성거산에 넘길 때, 등급별 kg을 넣으면 정우팜의 매입액, 판매액, 차익이 나옵니다. 입력된 값은 예시입니다.</p>
+    <div class="ctrl"><span class="note" style="font-size:14px">정우시스템 버섯</span><div class="seg" role="group" aria-label="선별 여부"><button type="button" id="sortY" aria-pressed="true">선별 완료</button><button type="button" id="sortN" aria-pressed="false">미선별 (−1,000원/kg)</button></div></div>
+    <div class="panel scroll">
+      <table class="calc">
+        <thead><tr><th>등급</th><th>수량 (kg)</th><th>정우시스템에 지급</th><th>성거산에서 받음</th><th>정우팜 차익</th></tr></thead>
+        <tbody id="calc"></tbody>
+        <tfoot><tr><td>합계</td><td id="tKg"></td><td id="tBuy"></td><td id="tSell"></td><td id="tNet"></td></tr></tfoot>
+      </table>
+    </div>
+    <div class="sum">
+      <div class="chip"><div class="l">정우시스템에 지급</div><div class="v" id="sBuy"></div></div>
+      <div class="chip"><div class="l">성거산에서 받음</div><div class="v" id="sSell"></div></div>
+      <div class="chip amber"><div class="l">정우팜 차익</div><div class="v" id="sNet"></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>성거산에서 매입 계산</h2>
+    <p class="lead" style="margin:0">정우팜이 성거산 버섯을 사올 때 등급별 kg을 넣으면 성거산에 지급할 금액이 나옵니다. 입력된 값은 예시입니다.</p>
+    <div class="panel scroll">
+      <table class="calc">
+        <thead><tr><th>등급</th><th>수량 (kg)</th><th>단가 (원/kg)</th><th>성거산에 지급</th></tr></thead>
+        <tbody id="buy"></tbody>
+        <tfoot><tr><td>합계</td><td id="uKg"></td><td></td><td id="uAmt"></td></tr></tfoot>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+const GRADES=[
+  {g:'A',  mutual:15000, sgs:17000, fromSgs:25000, ex:100, exB:20},
+  {g:'B',  mutual:15000, sgs:17000, fromSgs:20000, ex:100, exB:20},
+  {g:'C',  mutual:13000, sgs:13000, fromSgs:13000, ex:80,  exB:30},
+  {g:'D',  mutual:10000, sgs:10000, fromSgs:13000, ex:50,  exB:30},
+  {g:'하급',mutual:10000, sgs:7000,  fromSgs:10000, ex:60,  exB:20},
+  {g:'파지',mutual:4000,  sgs:4000,  fromSgs:4000,  ex:40,  exB:10},
+];
+const SORT_FEE=1000; let unsorted=false;
+const won=n=>Math.round(n).toLocaleString('ko-KR')+'원';
+const signed=n=>n>0?`<span class="pos">+${n.toLocaleString('ko-KR')}</span>`:n<0?`<span class="neg">−${Math.abs(n).toLocaleString('ko-KR')}</span>`:`<span class="zer">0</span>`;
+document.getElementById('price').innerHTML=GRADES.map(r=>`<tr><td><span class="g">${r.g}</span></td><td>${r.mutual.toLocaleString('ko-KR')}</td><td>${r.sgs.toLocaleString('ko-KR')}</td><td>${r.fromSgs.toLocaleString('ko-KR')}</td><td>${signed(r.sgs-r.mutual)}</td></tr>`).join('');
+const body=document.getElementById('calc');
+body.innerHTML=GRADES.map((r,i)=>`<tr><td><span class="g">${r.g}</span></td><td><input id="kg-${i}" inputmode="decimal" value="${r.ex}" aria-label="${r.g} 수량 kg"></td><td id="b-${i}"></td><td id="s-${i}"></td><td id="n-${i}"></td></tr>`).join('');
+function calc(){
+  let k=0,b=0,s=0;
+  GRADES.forEach((r,i)=>{
+    const v=parseFloat(document.getElementById('kg-'+i).value.replace(/,/g,''))||0;
+    const buy=v*(r.mutual-(unsorted?SORT_FEE:0)), sell=v*r.sgs, net=sell-buy;
+    document.getElementById('b-'+i).textContent=won(buy);
+    document.getElementById('s-'+i).textContent=won(sell);
+    document.getElementById('n-'+i).innerHTML=signed(Math.round(net))+(net?'원':'');
+    k+=v;b+=buy;s+=sell;
+  });
+  const net=s-b;
+  document.getElementById('tKg').textContent=k.toLocaleString('ko-KR')+' kg';
+  document.getElementById('tBuy').textContent=won(b);
+  document.getElementById('tSell').textContent=won(s);
+  document.getElementById('tNet').innerHTML=signed(Math.round(net))+'원';
+  document.getElementById('sBuy').textContent=won(b);
+  document.getElementById('sSell').textContent=won(s);
+  const sn=document.getElementById('sNet');sn.textContent=(net<0?'−':net>0?'+':'')+won(Math.abs(net));
+  sn.style.color=net<0?'var(--loss)':'var(--amber)';
+}
+body.addEventListener('input',calc);
+const sY=document.getElementById('sortY'),sN=document.getElementById('sortN');
+function setSort(u){unsorted=u;sY.setAttribute('aria-pressed',String(!u));sN.setAttribute('aria-pressed',String(u));calc()}
+sY.onclick=()=>setSort(false);sN.onclick=()=>setSort(true);calc();
+const ub=document.getElementById('buy');
+ub.innerHTML=GRADES.map((r,i)=>`<tr><td><span class="g">${r.g}</span></td><td><input id="bkg-${i}" inputmode="decimal" value="${r.exB}" aria-label="${r.g} 매입 수량 kg"></td><td>${r.fromSgs.toLocaleString('ko-KR')}</td><td id="ba-${i}"></td></tr>`).join('');
+function calcBuy(){let k=0,a=0;GRADES.forEach((r,i)=>{const v=parseFloat(document.getElementById('bkg-'+i).value.replace(/,/g,''))||0;const amt=v*r.fromSgs;document.getElementById('ba-'+i).textContent=won(amt);k+=v;a+=amt});
+ document.getElementById('uKg').textContent=k.toLocaleString('ko-KR')+' kg';document.getElementById('uAmt').textContent=won(a)}
+ub.addEventListener('input',calcBuy);calcBuy();
+<\/script>
+</body></html>
+</script>
 <script>
 const KEY='jw-smartfarm-settlement-v1';
 const won=n=>Math.round(n).toLocaleString('ko-KR')+'원';
@@ -53,7 +266,8 @@ const sorted=()=>[...db].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
 const app=document.getElementById('app');
 function go(v,id){location.hash=v+(id?'/'+id:'')}
 function route(){const[v,id]=location.hash.slice(1).split('/');document.querySelectorAll('nav [data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==(v||'dash')));
- if(v=='ledger')ledger();else if(v=='opex')opex(id);else if(v=='all'){location.replace('#dash');return}else if(v=='edit')edit(id);else if(v=='view')view(id);else dash();window.scrollTo(0,0)}
+ document.getElementById('ledgerFab').classList.toggle('on',v=='ledger');
+ if(v=='trade')trade();else if(v=='ledger')ledger();else if(v=='opex')opex(id);else if(v=='all'){location.replace('#dash');return}else if(v=='edit')edit(id);else if(v=='view')view(id);else dash();window.scrollTo(0,0)}
 const sum=(a,f)=>(a||[]).reduce((s,x)=>s+num(x[f]),0);
 function flow(c){const r=calc(c),rc=c.receipts||[],done=rc.filter(x=>x.status!='예정');
  const parkAdv=sum((c.advances||[]).filter(a=>a.who=='박세원'),'amount');
@@ -82,7 +296,7 @@ function dash(){let t={income:0,net:0,park:0,lee:0,ops:0},q={receivable:0,pendin
  <div class="card"><div class="l">총 계약 수</div><div class="v">${db.length}건</div></div><div class="card"><div class="l">이승윤 누적 적립금 (엑시트 시 전액 지급)</div><div class="v">${won(t.lee)}</div></div>
  <div class="card"><div class="l">총 순이익</div><div class="v">${won(t.net)}</div></div><div class="card"><div class="l">박세원 누적 수당</div><div class="v">${won(t.park)}</div></div>
  <div class="card"><div class="l">운영비 누적 (정우팜 귀속)</div><div class="v">${won(t.ops)}</div></div><div class="card"><div class="l">박세원 잔여 지급액</div><div class="v">${won(q.parkLeft)}</div></div><div class="card"><div class="l">미수금 합계</div><div class="v" style="color:#b33">${won(q.receivable)}</div></div><div class="card"><div class="l">입금 예정 합계</div><div class="v" style="color:#b36b00">${won(q.pending)}</div></div></div>
- <div class="box"><div class="row" style="justify-content:space-between"><b>계약 건 목록</b><button onclick="go('edit')">+ 새 계약</button></div>
+ <div class="box"><b>계약 건 목록</b>
  <table><tr><th>계약일</th><th>건명</th><th class="n hide-m">입금</th><th class="n hide-m">지출</th><th class="n">순이익</th><th class="n">이승윤 적립</th><th></th></tr>
  ${sorted().map(c=>{const r=calc(c);return`<tr><td><button class="tg btn-s" onclick="tog('${c.id}',this)">▼</button> ${esc(c.date)}</td><td>${esc(c.name)}</td><td class="n hide-m">${won(r.income)}</td><td class="n hide-m">${won(r.exp)}</td><td class="n">${won(r.net)}</td><td class="n">${won(r.lee)}</td><td><button class="btn-s" onclick="go('view','${c.id}')">상세보기</button></td></tr><tr id="d-${c.id}" hidden><td colspan=7>${detHTML(c)}</td></tr>`}).join('')||'<tr><td colspan=7 class="muted">계약 건이 없어요.</td></tr>'}</table></div>`}
 function ledger(){let cum=0;app.innerHTML=`<div class="box"><h3>이승윤 수당 적립 장부</h3><p class="muted">순이익의 33%를 적립하며, 정우팜 엑시트 시 적립금 전액을 지급합니다.</p>
@@ -90,6 +304,10 @@ function ledger(){let cum=0;app.innerHTML=`<div class="box"><h3>이승윤 수당
  ${sorted().map(c=>{const r=calc(c);cum+=r.lee;return`<tr class="click" onclick="go('view','${c.id}')"><td>${esc(c.date)}</td><td>${esc(c.name)}</td><td class="n">${won(r.net)}</td><td class="n">${won(r.lee)}</td><td class="n"><b>${won(cum)}</b></td></tr>`}).join('')}
  <tr class="tot"><td colspan=4>누적 적립금 합계</td><td class="n">${won(cum)}</td></tr></table>
  <div class="row noprint" style="margin-top:12px"><button class="sub" onclick="print()">인쇄</button></div></div>`}
+function trade(){app.innerHTML='<iframe class="tradeframe" id="tf" title="버섯 거래 구조"></iframe>';
+ const f=document.getElementById('tf');f.onload=()=>{const fit=()=>{try{f.style.height=f.contentDocument.documentElement.scrollHeight+'px'}catch(e){}};fit();
+  try{new ResizeObserver(fit).observe(f.contentDocument.body)}catch(e){}};
+ f.srcdoc=document.getElementById('tradeSrc').textContent.replace(/<\\\/script>/g,'<'+'/script>')}
 function view(id){const c=db.find(x=>x.id==id);if(!c)return go('dash');const r=calc(c);
  app.innerHTML=`<div class="box doc"><h2>정 산 서</h2><table><tr><th style="width:25%">건명</th><td>${esc(c.name)}</td><th style="width:20%">계약일</th><td>${esc(c.date)}</td></tr>
  <tr><th>고객/현장</th><td colspan=3>${esc(c.client)}</td></tr></table>
