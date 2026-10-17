@@ -103,7 +103,7 @@ tbody td:first-child{font-weight:600}
   <section>
     <h2>거래 흐름</h2>
     <div class="panel scroll">
-      <svg viewBox="0 0 720 300" width="100%" role="img" aria-label="정우시스템과 정우팜은 같은 단가로 서로 사고팔고, 정우팜과 성거산도 서로 사고팔되 단가가 다르다. 정우시스템과 성거산은 직거래하지 않는다." style="min-width:520px;display:block">
+      <svg viewBox="0 0 720 300" width="100%" role="img" aria-label="정우시스템과 정우팜은 같은 단가로 서로 사고팔고, 정우팜과 성거산도 같은 단가로 서로 사고판다. 정우시스템과 성거산은 직거래하지 않는다." style="min-width:520px;display:block">
         <defs>
           <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="var(--pine)"/></marker>
           <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="var(--amber)"/></marker>
@@ -131,7 +131,7 @@ tbody td:first-child{font-weight:600}
         
         <line x1="449" y1="66" x2="526" y2="66" stroke="var(--amber)" stroke-width="2.5" marker-end="url(#ah2)"/>
         <line x1="526" y1="90" x2="449" y2="90" stroke="var(--amber)" stroke-width="2.5" marker-end="url(#ah2)"/>
-        <text x="488" y="22" text-anchor="middle" font-size="12" fill="var(--amber)" font-weight="600">양방향 · 단가 다름</text>
+        <text x="488" y="22" text-anchor="middle" font-size="12" fill="var(--amber)" font-weight="600">양방향 · 같은 단가</text>
         
         <path d="M105,118 C105,230 615,230 615,118" fill="none" stroke="var(--loss)" stroke-width="2" stroke-dasharray="6 6"/>
         <circle cx="360" cy="201" r="15" fill="var(--loss-soft)" stroke="var(--loss)" stroke-width="2"/>
@@ -194,12 +194,12 @@ tbody td:first-child{font-weight:600}
 
 <script>
 const GRADES=[
-  {g:'A',  mutual:15000, sgs:17000, fromSgs:25000, ex:100, exB:20},
-  {g:'B',  mutual:15000, sgs:17000, fromSgs:20000, ex:100, exB:20},
+  {g:'A',  mutual:15000, sgs:25000, fromSgs:25000, ex:100, exB:20},
+  {g:'B',  mutual:15000, sgs:20000, fromSgs:20000, ex:100, exB:20},
   {g:'C',  mutual:13000, sgs:13000, fromSgs:13000, ex:80,  exB:30},
-  {g:'D',  mutual:10000, sgs:10000, fromSgs:13000, ex:50,  exB:30},
-  {g:'하급',mutual:10000, sgs:7000,  fromSgs:10000, ex:60,  exB:20},
-  {g:'파지',mutual:4000,  sgs:4000,  fromSgs:4000,  ex:40,  exB:10},
+  {g:'D',  mutual:10000, sgs:13000, fromSgs:13000, ex:50,  exB:30},
+  {g:'기형',mutual:10000, sgs:10000, fromSgs:10000, ex:60,  exB:20},
+  {g:'시식(파지)',mutual:3000, sgs:5000, fromSgs:5000, ex:40, exB:10},
 ];
 const SORT_FEE=1000; let unsorted=false;
 const won=n=>Math.round(n).toLocaleString('ko-KR')+'원';
