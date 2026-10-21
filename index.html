@@ -1,66 +1,131 @@
 <!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>정우팜 최상급 참송이버섯 산지직송</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;900&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;background:#fbf6ef;color:#3b2414}
-.hero{background:linear-gradient(160deg,#5a3520,#8b5a2b);color:#fff;padding:40px 22px 34px;text-align:center}
-.badge{display:inline-block;background:#f2c14e;color:#3b2414;font-weight:800;padding:6px 14px;border-radius:20px;font-size:14px}
-h1{font-size:30px;margin:14px 0 8px;line-height:1.3}.hero p{opacity:.92;line-height:1.6;margin:0}
-.wrap{max-width:520px;margin:0 auto;padding:20px}
-.card{background:#fff;border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 4px 14px rgba(90,53,32,.08)}
-h2{font-size:20px;margin:0 0 12px}.cmp{display:flex;gap:10px}.cmp div{flex:1;text-align:center;padding:14px 6px;border-radius:12px;background:#f5ece1}
-.cmp b{display:block;font-size:20px;margin-top:4px}.cmp .hl{background:#3b2414;color:#fff}
-.prod{display:flex;justify-content:space-between;align-items:center;border:2px solid #eadbc8;border-radius:14px;padding:16px;margin-bottom:10px}
-.prod.best{border-color:#c0392b}.prod .n{font-weight:800;font-size:18px}.prod .d{font-size:13px;color:#8a6d55;margin-top:4px}
-.prod .p{font-size:24px;font-weight:900;color:#c0392b}
-ul{padding-left:18px;line-height:1.8;margin:0}
-label{display:block;font-weight:700;margin:12px 0 6px;font-size:15px}
-input,select,textarea{width:100%;padding:13px;border:1px solid #d9c6b0;border-radius:10px;font-size:16px;font-family:inherit}
-.agree{display:flex;gap:8px;align-items:flex-start;font-size:13px;margin-top:14px;line-height:1.5;font-weight:400}.agree input{width:auto;margin-top:3px}
-.btn{display:block;width:100%;padding:16px;border:0;border-radius:12px;font-size:17px;font-weight:800;margin-top:12px;text-align:center;text-decoration:none;cursor:pointer}
-.kakao{background:#fee500;color:#3c1e1e}.store{background:#03c75a;color:#fff}.main{background:#c0392b;color:#fff}
-#out{display:none;white-space:pre-wrap;background:#f5ece1;padding:14px;border-radius:10px;font-size:14px;margin-top:12px}
-.total{font-size:18px;font-weight:800;text-align:right;margin-top:12px}
-.acct{background:#f5ece1;border-radius:10px;padding:12px;font-size:15px;line-height:1.7}
-footer{text-align:center;font-size:12px;color:#8a6d55;padding:20px}
+:root{--bg:#0f1210;--card:#171b18;--gold:#c9a45c;--gold2:#e8d3a0;--line:rgba(201,164,92,.35);--tx:#ece6da;--mut:#a39a88}
+*{box-sizing:border-box}body{margin:0;font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);letter-spacing:-.2px}
+.serif{font-family:"Noto Serif KR",serif}
+.hero{position:relative;padding:56px 26px 46px;text-align:center;background:radial-gradient(ellipse at 50% 0%,#2a3326 0%,#0f1210 70%);border-bottom:1px solid var(--line)}
+.eyebrow{font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase}
+.orn{width:60px;height:1px;background:var(--gold);margin:18px auto;position:relative}.orn:after{content:"◆";position:absolute;left:50%;top:-8px;transform:translateX(-50%);color:var(--gold);font-size:10px;background:#141813;padding:0 6px}
+h1{font-family:"Noto Serif KR",serif;font-weight:600;font-size:28px;line-height:1.5;margin:0 0 14px}
+h1 em{font-style:normal;color:var(--gold2);font-weight:900;font-size:34px}
+.hero p{color:var(--mut);line-height:1.8;font-size:14px;margin:0}
+.cta{display:inline-block;margin-top:26px;padding:14px 34px;border:1px solid var(--gold);color:var(--gold2);text-decoration:none;font-size:15px;letter-spacing:2px}
+.wrap{max-width:520px;margin:0 auto;padding:28px 20px}
+.card{background:var(--card);border:1px solid var(--line);padding:26px 22px;margin-bottom:22px}
+h2{font-family:"Noto Serif KR",serif;font-weight:600;font-size:20px;margin:0 0 6px;color:var(--gold2)}
+.sub{font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:18px;display:block}
+.acct{border:1px solid var(--gold);background:linear-gradient(135deg,#1d211c,#141713);padding:20px;text-align:center}
+.acct .bank{font-size:13px;color:var(--mut)}.acct .no{font-family:"Noto Serif KR",serif;font-size:25px;color:var(--gold2);font-weight:900;margin:6px 0;letter-spacing:1px}
+.acct .own{font-size:14px}
+.copy{margin-top:14px;background:var(--gold);color:#111;border:0;padding:11px 22px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.cmp{display:flex;gap:10px}.cmp div{flex:1;text-align:center;padding:18px 6px;border:1px solid #333}
+.cmp b{display:block;font-family:"Noto Serif KR",serif;font-size:19px;margin:6px 0 2px}.cmp small{color:var(--mut)}
+.cmp .hl{border-color:var(--gold);background:rgba(201,164,92,.08)}.cmp .hl b{color:var(--gold2)}
+.cmp .old b{text-decoration:line-through;color:#888}
+.note{font-size:14px;line-height:1.8;color:var(--mut);margin:16px 0 0}.note b{color:var(--gold2)}
+.prod{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding:18px 0}
+.prod:first-of-type{border-top:0}.prod .n{font-family:"Noto Serif KR",serif;font-size:17px;font-weight:600}
+.prod .tag{display:inline-block;font-size:10px;letter-spacing:2px;color:#111;background:var(--gold);padding:2px 7px;margin-bottom:6px}
+.prod .d{font-size:12px;color:var(--mut);margin-top:5px}.prod .p{font-family:"Noto Serif KR",serif;font-size:22px;font-weight:900;color:var(--gold2);white-space:nowrap}
+ul{padding-left:18px;line-height:2;margin:0;color:#d6cfc1;font-size:14px}
+label{display:block;font-size:13px;color:var(--gold);margin:16px 0 7px;letter-spacing:1px}
+input,select,textarea{width:100%;padding:13px;border:1px solid #3a3a33;background:#0f1210;color:var(--tx);font-size:16px;font-family:inherit;border-radius:0}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--gold)}
+.agree{display:flex;gap:10px;align-items:flex-start;font-size:12px;line-height:1.6;color:var(--mut);letter-spacing:0}.agree input{width:auto;margin-top:3px;accent-color:var(--gold)}
+.total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);margin-top:20px;padding-top:16px}
+.total span:last-child{font-family:"Noto Serif KR",serif;font-size:26px;font-weight:900;color:var(--gold2)}
+.btn{display:block;width:100%;padding:16px;border:0;font-size:16px;font-weight:700;margin-top:12px;text-align:center;text-decoration:none;cursor:pointer;font-family:inherit;letter-spacing:1px}
+.main{background:var(--gold);color:#111}.kakao{background:#fee500;color:#3c1e1e}.store{background:transparent;border:1px solid #03c75a;color:#5fe39a}
+#out{display:none;white-space:pre-wrap;border:1px dashed var(--gold);padding:14px;font-size:14px;margin-top:14px;line-height:1.7}
+footer{text-align:center;font-size:12px;color:#6f6858;padding:30px 20px 40px;border-top:1px solid var(--line);line-height:1.9}
+
+.hero{padding:0;text-align:center}
+.himg{width:100%;height:340px;object-fit:cover;display:block;filter:brightness(.5);-webkit-mask-image:linear-gradient(#000 45%,transparent);mask-image:linear-gradient(#000 45%,transparent)}
+.hbox h1,.hbox .eyebrow{text-shadow:0 2px 12px #000,0 0 4px #000}
+.hbox{margin-top:-150px;position:relative;padding:0 26px 44px}
+.pills{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:20px}
+.pills span{font-size:11px;border:1px solid var(--line);color:var(--gold2);padding:5px 10px}
+.ph{width:100%;display:block;margin:16px 0 0;border:1px solid var(--line)}
+.cap{font-size:11px;color:var(--mut);margin-top:6px;text-align:center}
+.quote{font-family:"Noto Serif KR",serif;text-align:center;font-size:19px;line-height:1.7;padding:22px 10px 30px;color:var(--gold2)}
+.feat{display:flex;gap:14px;border-top:1px solid var(--line);padding:18px 0}.feat:first-of-type{border-top:0}
+.feat img{width:110px;height:110px;object-fit:cover;flex:none;border:1px solid var(--line)}
+.feat b{font-family:"Noto Serif KR",serif;font-size:16px;color:var(--gold2);display:block;margin-bottom:6px}.feat p{margin:0;font-size:13px;line-height:1.7;color:var(--mut)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stats div{border:1px solid #333;padding:14px 10px;text-align:center}
+.stats b{display:block;font-family:"Noto Serif KR",serif;font-size:20px;color:var(--gold2);margin-bottom:4px}.stats small{font-size:11px;color:var(--mut);line-height:1.5;display:block}
+.two{display:flex;gap:8px}.two figure{flex:1;margin:12px 0 0}.two img{width:100%;height:170px;object-fit:cover;border:1px solid var(--line);display:block}
+.two figcaption{font-size:11px;color:var(--mut);text-align:center;margin-top:5px}
+.steps{counter-reset:s;list-style:none;padding:0}.steps li{counter-increment:s;position:relative;padding:0 0 14px 40px;line-height:1.6}
+.steps li:before{content:"0" counter(s);position:absolute;left:0;top:0;font-family:"Noto Serif KR",serif;color:var(--gold);font-weight:900}
+details{border-top:1px solid var(--line);padding:14px 0}details:first-of-type{border-top:0}summary{cursor:pointer;font-size:14px;color:var(--tx)}details p{font-size:13px;color:var(--mut);line-height:1.7;margin:10px 0 0}
+.sticky{position:fixed;left:0;right:0;bottom:0;display:flex;z-index:9}.sticky a{flex:1;text-align:center;padding:15px;font-weight:700;text-decoration:none;font-size:15px}
+body{padding-bottom:54px}
 </style></head><body>
-<div class="hero"><span class="badge">🍄 산지직송 · 중간유통 0원</span>
-<h1>치킨 한 마리 3만원 시대,<br>최상급 참송이 1kg이<br>32,000원!</h1>
-<p>정우팜 스마트팜에서 직접 키운 참송이버섯을<br>농부가 우리 아파트로 바로 보내드립니다.</p></div>
+<div class="hero"><img class="himg" src="img/hero.jpg" alt="수확한 참송이">
+<div class="hbox"><div class="eyebrow">Jungwoo Farm · Premium</div><div class="orn"></div>
+<h1>치킨 한 마리 3만원 시대,<br>최상급 참송이 1kg<br><em>32,000원</em></h1>
+<p>데이터가 키운 정직한 참송이.<br>스마트팜 큐브에서 키워 중간 유통 없이<br>농장에서 댁으로 바로 보내드립니다.</p>
+<div class="pills"><span>무농약</span><span>463종 잔류농약 불검출</span><span>코스트코·이마트 납품</span></div>
+<a class="cta" href="#order">지금 주문하기</a></div></div>
 <div class="wrap">
-<div class="card"><h2>왜 이렇게 저렴할까요?</h2>
-<div class="cmp"><div>마트 시세<b>100g 5,000원</b><small>1kg 약 50,000원</small></div><div class="hl">정우팜 직거래<b>1kg 32,000원</b><small>100g 3,200원</small></div></div>
-<p style="font-size:14px;line-height:1.6;margin:12px 0 0">중간 유통 단계를 모두 없애고 농장에서 바로 보내드려 <b>마트 대비 약 36% 저렴</b>합니다.</p></div>
-<div class="card"><h2>상품 안내</h2>
-<div class="prod best"><div><div class="n">특상품 참송이 1kg</div><div class="d">갓이 단단하고 굵은 최상급 · 선물용 추천</div></div><div class="p">32,000원</div></div>
+<div class="quote">"한 번 맛본 분이<br>또 주문하는 버섯"</div>
+<div class="card"><h2>참송이가 특별한 이유</h2><span class="sub">WHY CHAMSONGI</span>
+<div class="feat"><img src="img/texture.jpg" alt="결대로 찢어지는 참송이"><div><b>결대로 찢어지는 식감</b><p>닭가슴살 같은 조직감.<br>조리 후에도 탱탱합니다.</p></div></div>
+<div class="feat"><img src="img/aroma.jpg" alt="참송이"><div><b>이름값 하는 솔향</b><p>표고·새송이와는 다른<br>고급스러운 향.</p></div></div>
+<div class="feat"><img src="img/test-report.jpg" alt="검정증명서"><div><b>무농약 · 463종 잔류농약 불검출</b><p>농업용수 수질검사 적합,<br>배지 중금속 검사.</p></div></div></div>
+<div class="card"><h2>날씨 대신 데이터가 키웁니다</h2><span class="sub">SMART FARM CUBE</span>
+<p class="note" style="margin-top:0">장마·폭염에 흔들리지 않는 실내 환경제어 큐브에서 온도·습도·CO₂를 생육 단계별로 맞춰 사계절 고른 품질로 키웁니다. 40곳의 큐브송이 직영 농장이 쌓은 재배 데이터를 씁니다.</p>
+<img class="ph" src="img/cube-inside.jpg" alt="재배동 내부" style="height:300px;object-fit:cover"><div class="cap">실제 재배동 내부</div></div>
+<div class="card"><h2>이미 시장이 고른 버섯</h2><span class="sub">TRUSTED</span>
+<div class="stats"><div><b>433건</b><small>9월 초 발주서 한 장의 온라인 주문 · 전국 16개 시·도</small></div><div><b>코스트코·이마트</b><small>납품 중 · 생산자 인증번호 제13305665호</small></div><div><b>13,000원</b><small>백화점 식품관 참송이 소포장 한 팩</small></div><div><b>40곳</b><small>큐브송이 직영 농장</small></div></div>
+<div class="two"><figure><img src="img/mart.jpg" alt="대형마트 매대"><figcaption>대형마트 매대</figcaption></figure><figure><img src="img/dept-store.jpg" alt="백화점 식품관"><figcaption>백화점 식품관</figcaption></figure></div></div>
+<div class="card"><h2>입금 계좌</h2><span class="sub">BANK TRANSFER</span>
+<div class="acct"><div class="bank">신한은행</div><div class="no" id="acno">140-015-691439</div><div class="own">예금주 <b>정우시스템</b></div>
+<button class="copy" onclick="copyAcct()">계좌번호 복사</button></div>
+<p class="note">입금자명은 주문자 이름과 같게 해주세요.</p></div>
+<div class="card"><h2>왜 이 가격일까요</h2><span class="sub">DIRECT FROM FARM</span>
+<div class="cmp"><div class="old">마트 시세<b>100g 5,000원</b><small>1kg 약 50,000원</small></div><div class="hl">정우팜 직거래<b>100g 3,200원</b><small>1kg 32,000원</small></div></div>
+<p class="note">중간 유통 단계를 모두 덜어내 <b>마트 대비 약 36% 합리적인 가격</b>으로 최상급 참송이를 드립니다.</p></div>
+<div class="card"><h2>상품 안내</h2><span class="sub">SELECTION</span>
+<div class="prod"><div><span class="tag">BEST</span><div class="n">특상품 참송이 1kg</div><div class="d">갓이 단단하고 굵은 최상급 · 선물용 추천</div></div><div class="p">32,000원</div></div>
 <div class="prod"><div><div class="n">실속형 참송이 1kg</div><div class="d">맛·향 동일, 모양만 다양 · 가정용 추천</div></div><div class="p">22,000원</div></div></div>
-<div class="card"><h2>참송이, 이렇게 드세요</h2><ul><li>버터구이 · 소금 참기름 구이</li><li>라면·찌개·전골에 쭉쭉 찢어서</li><li>소고기와 함께 구이로</li><li>냉장 보관 후 수확 7일 내 드시면 가장 맛있어요</li></ul></div>
-<div class="card" id="order"><h2>📝 주문하기</h2>
+<div class="card"><h2>참송이, 이렇게 즐기세요</h2><span class="sub">SERVING</span><ul><li>버터구이 · 소금 참기름 구이</li><li>라면·찌개·전골에 결대로 찢어서</li><li>소고기와 함께 구이로</li><li>냉장 보관 후 수확 7일 내 드시면 가장 맛있어요</li></ul></div>
+<div class="card"><h2>주문 방법</h2><span class="sub">HOW TO ORDER</span><ol class="steps"><li>아래 주문서에 상품·수량·배송지를 입력</li><li>신한은행 140-015-691439 (정우시스템)로 입금</li><li>주문서를 복사해 카카오톡으로 보내기</li><li>입금 확인 후 농장에서 바로 발송</li></ol></div>
+<div class="card" id="order"><h2>주문하기</h2><span class="sub">ORDER</span>
 <label>상품 선택</label><select id="prod"><option value="특상품 1kg|32000">특상품 1kg — 32,000원</option><option value="실속형 1kg|22000">실속형 1kg — 22,000원</option></select>
 <label>수량</label><select id="qty"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
 <label>이름</label><input id="name" placeholder="홍길동">
 <label>연락처</label><input id="phone" type="tel" placeholder="010-0000-0000">
 <label>배송 주소 (아파트 동·호수)</label><input id="addr" placeholder="○○아파트 101동 1001호">
 <label>요청사항 (선택)</label><textarea id="memo" rows="2"></textarea>
-<div class="total">합계: <span id="sum">32,000원</span></div>
+<div class="total"><span>합계</span><span id="sum">32,000원</span></div>
+<div class="acct" style="margin-top:16px;padding:14px"><div class="bank">무통장입금 · 신한은행 · 예금주 정우시스템</div><div class="no" style="font-size:21px">140-015-691439</div><button class="copy" onclick="copyAcct()">계좌번호 복사</button></div>
 <label class="agree"><input type="checkbox" id="agree"><span>[필수] 개인정보 수집·이용 동의 — 수집항목: 이름, 연락처, 주소 / 목적: 주문 배송 및 재구매 안내 / 보유기간: 동의 철회 시 또는 수집일로부터 1년</span></label>
 <button class="btn main" onclick="makeOrder()">주문서 만들기</button>
 <div id="out"></div>
 <button class="btn kakao" id="copyBtn" style="display:none" onclick="copyKakao()">주문서 복사 후 카카오톡으로 보내기</button></div>
-<div class="card"><h2>💳 결제 방법</h2>
-<p style="margin:0 0 8px;font-weight:700">① 무통장입금</p><div class="acct">신한은행 140-015-691439<br>예금주: 정우시스템<br><small>입금자명은 주문자 이름과 같게 해주세요.</small></div>
-<p style="margin:16px 0 0;font-weight:700">② 스마트스토어 (카드·네이버페이)</p>
+<div class="card"><h2>결제 · 문의</h2><span class="sub">PAYMENT</span>
+<p class="note" style="margin:0">① 무통장입금 — 신한은행 140-015-691439 (예금주 정우시스템)<br>② 스마트스토어 — 카드 · 네이버페이</p>
 <a class="btn store" href="[스마트스토어 링크]">네이버 스마트스토어에서 주문</a>
 <a class="btn kakao" href="[카카오톡 채널 링크]">카카오톡으로 문의하기</a></div>
+<div class="card"><h2>자주 묻는 질문</h2><span class="sub">FAQ</span>
+<details><summary>특상품과 실속형은 무엇이 다른가요?</summary><p>맛과 향은 같고 모양과 크기가 다릅니다. 선물용은 특상품, 가정용은 실속형을 추천드려요.</p></details>
+<details><summary>어떻게 보관하나요?</summary><p>냉장 보관 후 수확 7일 내 드시면 가장 맛있어요.</p></details>
+<details><summary>입금자명이 달라도 되나요?</summary><p>확인을 위해 주문자 이름과 같게 입금해주세요. 다르면 카카오톡으로 알려주세요.</p></details></div>
 </div>
-<footer>정우팜 · 산지직송 참송이버섯<br>[사업자 정보 입력]</footer>
+<footer><span class="serif" style="color:var(--gold);font-size:15px">정우팜</span><br>스마트팜 산지직송 참송이버섯<br>[사업자 정보 입력]</footer>
+<div class="sticky"><a href="#" onclick="copyAcct();return false" style="background:#1d211c;color:var(--gold2);border-top:1px solid var(--gold)">계좌 복사</a><a href="#order" style="background:var(--gold);color:#111">주문하기</a></div>
 <script>
 const $=id=>document.getElementById(id);let msg='';
 function upd(){const[n,p]=$('prod').value.split('|');$('sum').textContent=(p*$('qty').value).toLocaleString()+'원'}
 $('prod').onchange=upd;$('qty').onchange=upd;
+function copyAcct(){navigator.clipboard.writeText('신한은행 140-015-691439 정우시스템').then(()=>alert('계좌번호가 복사됐어요.\n신한은행 140-015-691439 (예금주 정우시스템)'))}
 function makeOrder(){const[n,p]=$('prod').value.split('|');const q=$('qty').value;
 if(!$('name').value||!$('phone').value||!$('addr').value){alert('이름, 연락처, 주소를 입력해주세요.');return}
 if(!$('agree').checked){alert('개인정보 수집·이용에 동의해주세요.');return}
-msg=`[정우팜 참송이 주문]\n상품: ${n} x ${q}\n합계: ${(p*q).toLocaleString()}원\n이름: ${$('name').value}\n연락처: ${$('phone').value}\n주소: ${$('addr').value}\n요청: ${$('memo').value||'-'}\n결제: 무통장입금`;
+msg=`[정우팜 참송이 주문]\n상품: ${n} x ${q}\n합계: ${(p*q).toLocaleString()}원\n이름: ${$('name').value}\n연락처: ${$('phone').value}\n주소: ${$('addr').value}\n요청: ${$('memo').value||'-'}\n결제: 무통장입금 (신한은행 140-015-691439 정우시스템)`;
 $('out').textContent=msg;$('out').style.display='block';$('copyBtn').style.display='block'}
 function copyKakao(){navigator.clipboard.writeText(msg).then(()=>{alert('주문서가 복사됐어요. 카카오톡 채팅창에 붙여넣기 해주세요.');location.href='[카카오톡 채널 링크]'})}
 </script></body></html>
