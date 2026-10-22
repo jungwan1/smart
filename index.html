@@ -59,11 +59,11 @@ footer{text-align:center;font-size:12px;color:#6f6858;padding:30px 20px 40px;bor
 .two figcaption{font-size:11px;color:var(--mut);text-align:center;margin-top:5px}
 .steps{counter-reset:s;list-style:none;padding:0}.steps li{counter-increment:s;position:relative;padding:0 0 14px 40px;line-height:1.6}
 .steps li:before{content:"0" counter(s);position:absolute;left:0;top:0;font-family:"Noto Serif KR",serif;color:var(--gold);font-weight:900}
-details{border-top:1px solid var(--line);padding:14px 0}details:first-of-type{border-top:0}summary{cursor:pointer;font-size:14px;color:var(--tx)}details p{font-size:13px;color:var(--mut);line-height:1.7;margin:10px 0 0}
+details{border-top:1px solid var(--line);padding:14px 0}details:first-of-type{border-top:0}.fg{font-size:12px;letter-spacing:.08em;color:var(--gold,#b8964e);margin:18px 0 2px;font-weight:600}.fg+details{border-top:0}summary{cursor:pointer;font-size:14px;color:var(--tx)}details p{font-size:13px;color:var(--mut);line-height:1.7;margin:10px 0 0}
 .sticky{position:fixed;left:0;right:0;bottom:0;display:flex;z-index:9}.sticky a{flex:1;text-align:center;padding:15px;font-weight:700;text-decoration:none;font-size:15px}
 body{padding-bottom:54px}
 </style></head><body>
-<div class="hero"><img class="himg" src="img/hero.jpg" alt="수확한 참송이">
+<div class="hero"><img class="himg" src="img/aroma.jpg" alt="수확한 참송이">
 <div class="hbox"><div class="eyebrow">Jungwoo Farm · Premium</div><div class="orn"></div>
 <h1>치킨 한 마리 3만원 시대,<br>최상급 참송이 1kg<br><em>32,000원</em></h1>
 <p>농부가 직접 키운 정직한 참송이.<br>스마트팜 큐브에서 키워 중간 유통 없이<br>농장에서 댁으로 바로 보내드립니다.</p>
@@ -76,8 +76,7 @@ body{padding-bottom:54px}
 <div class="feat"><img src="img/aroma.jpg" alt="참송이"><div><b>이름값 하는 솔향</b><p>표고·새송이와는 다른<br>고급스러운 향.</p></div></div>
 <div class="feat"><img src="img/test-report.jpg" alt="검정증명서"><div><b>무농약 · 463종 잔류농약 불검출</b><p>농업용수 수질검사 적합,<br>배지 중금속 검사.</p></div></div></div>
 <div class="card"><h2>농부가 직접 키워 더 저렴합니다</h2><span class="sub">SMART FARM CUBE</span>
-<p class="note" style="margin-top:0">장마·폭염에 흔들리지 않는 실내 환경제어 큐브에서 온도·습도·CO₂를 생육 단계별로 맞춰 사계절 고른 품질로 키웁니다. 농부가 직접 키우고 직접 보내 중간 유통 마진이 없으니, 같은 품질을 마트보다 훨씬 저렴하게 드립니다.</p>
-<img class="ph" src="img/cube-inside.jpg" alt="재배동 내부" style="height:300px;object-fit:cover"><div class="cap">실제 재배동 내부</div></div>
+<p class="note" style="margin-top:0">장마·폭염에 흔들리지 않는 실내 환경제어 큐브에서 온도·습도·CO₂를 생육 단계별로 맞춰 사계절 고른 품질로 키웁니다. 농부가 직접 키우고 직접 보내 중간 유통 마진이 없으니, 같은 품질을 마트보다 훨씬 저렴하게 드립니다.</p></div>
 <div class="card"><h2>이미 시장이 고른 버섯</h2><span class="sub">TRUSTED</span>
 <div class="stats"><div><b>433건</b><small>9월 초 발주서 한 장의 온라인 주문 · 전국 16개 시·도</small></div><div><b>코스트코·이마트</b><small>납품 중 · 생산자 인증번호 제13305665호</small></div><div><b>13,000원</b><small>백화점 식품관 참송이 소포장 한 팩</small></div><div><b>40곳</b><small>큐브송이 직영 농장</small></div></div>
 <div class="two"><figure><img src="img/mart.jpg" alt="대형마트 매대"><figcaption>대형마트 매대</figcaption></figure><figure><img src="img/dept-store.jpg" alt="백화점 식품관"><figcaption>백화점 식품관</figcaption></figure></div></div>
@@ -111,9 +110,25 @@ body{padding-bottom:54px}
 <a class="btn store" href="[스마트스토어 링크]">네이버 스마트스토어에서 주문</a>
 <a class="btn kakao" href="[카카오톡 채널 링크]">카카오톡으로 문의하기</a></div>
 <div class="card"><h2>자주 묻는 질문</h2><span class="sub">FAQ</span>
-<details><summary>특상품과 실속형은 무엇이 다른가요?</summary><p>맛과 향은 같고 모양과 크기가 다릅니다. 선물용은 특상품, 가정용은 실속형을 추천드려요.</p></details>
-<details><summary>어떻게 보관하나요?</summary><p>냉장 보관 후 수확 7일 내 드시면 가장 맛있어요.</p></details>
-<details><summary>입금자명이 달라도 되나요?</summary><p>확인을 위해 주문자 이름과 같게 입금해주세요. 다르면 카카오톡으로 알려주세요.</p></details></div>
+<div class="fg">상품</div>
+<details><summary>특상품과 실속형은 무엇이 다른가요?</summary><p>맛과 향은 똑같고 모양과 크기만 달라요. 선물용은 모양이 고른 특상품(1kg 32,000원), 가정용·요리용은 실속형(1kg 22,000원)을 추천드려요.</p></details>
+<details><summary>참송이는 자연산 송이와 어떻게 다른가요?</summary><p>참송이는 표고 계열 균으로 키운 재배 버섯이에요. 송이처럼 갓이 덜 펴지고 기둥이 두툼하며, 결대로 쭉쭉 찢어지는 쫄깃한 식감과 은은한 송이 향이 특징이에요. 자연산 송이보다 훨씬 부담 없는 가격으로 즐기실 수 있어요.</p></details>
+<details><summary>표고버섯과는 뭐가 다른가요?</summary><p>같은 표고 계열이지만 참송이는 기둥이 굵고 살이 단단해 고기처럼 찢어지는 식감이 나요. 향도 표고보다 은은하고 부드러워 생으로도 드실 수 있어요.</p></details>
+<details><summary>정말 무농약인가요?</summary><p>네, 농약 없이 키웠고 463종 잔류농약 검사에서 모두 불검출됐어요. 농부가 직접 키워 중간 유통 없이 보내드려요.</p></details>
+<details><summary>크기나 모양이 조금씩 다른가요?</summary><p>자연스럽게 자라는 버섯이라 송이마다 크기와 모양이 조금씩 달라요. 중량은 맞춰 보내드리며, 모양이 고른 걸 원하시면 특상품을 골라주세요.</p></details>
+<details><summary>갓에 하얀 점이나 솜털 같은 게 있어요.</summary><p>대부분 버섯이 자라며 생기는 균사체로, 드셔도 괜찮아요. 다만 끈적이거나 불쾌한 냄새가 나면 드시지 말고 카카오톡으로 사진과 함께 알려주세요.</p></details>
+<div class="fg">보관·요리</div>
+<details><summary>받으면 어떻게 보관하나요?</summary><p>받으신 날 바로 냉장 보관해 주세요. 씻지 말고 키친타월로 감싸 용기나 지퍼백에 살짝 열어 두면 습기가 덜 차요. 향과 식감은 받은 뒤 며칠 안에 드실 때 가장 좋아요.</p></details>
+<details><summary>냉동해도 되나요?</summary><p>네, 씻지 않고 먹기 좋게 찢거나 썰어 지퍼백에 공기를 빼서 냉동하세요. 요리할 때는 해동하지 말고 언 채로 국·볶음·솥밥에 바로 넣어야 식감이 살아요.</p></details>
+<details><summary>씻어야 하나요? 손질은 어떻게 하나요?</summary><p>물에 담가 씻으면 향이 빠지고 물러지기 쉬워요. 이물질은 젖은 키친타월로 가볍게 닦거나 드시기 직전에 흐르는 물에 살짝만 헹궈주세요. 밑동 끝 딱딱한 부분만 잘라내고, 칼보다 손으로 결대로 찢으면 더 맛있어요.</p></details>
+<details><summary>생으로 먹어도 되나요?</summary><p>무농약으로 키워 결대로 찢어 참기름장에 찍어 생으로도 많이 드세요. 버섯 알레르기가 있거나 어린이·어르신은 익혀 드시는 걸 권해드려요.</p></details>
+<details><summary>어떻게 먹으면 맛있나요?</summary><p>마른 팬이나 센 불에 겉이 노릇하게 구워 소금·기름장에 찍어 드시면 향이 제일 잘 살아요. 소고기·삼겹살과 함께 굽거나, 라면·전골·샤브샤브·솥밥에 넣어도 좋아요.</p></details>
+<div class="fg">주문·배송</div>
+<details><summary>어떻게 주문하나요?</summary><p>아래 주문서를 작성해 카카오톡으로 보내주시고, 신한은행 140-015-691439(예금주 정우시스템)로 입금해 주세요. 입금이 확인되면 순서대로 준비해 보내드려요.</p></details>
+<details><summary>입금자명이 달라도 되나요?</summary><p>확인을 위해 주문자 이름과 같게 입금해 주세요. 다르게 입금하셨다면 카카오톡으로 알려주세요.</p></details>
+<details><summary>언제 받을 수 있나요?</summary><p>신선식품이라 수확 상황에 맞춰 꼼꼼히 포장해 택배로 보내드려요. 정확한 발송일은 주문 확인 후 카카오톡으로 안내드려요. 제주·도서산간 지역은 택배 사정에 따라 하루 이틀 더 걸릴 수 있어요.</p></details>
+<details><summary>선물로 보내도 되나요?</summary><p>네, 주문서에 받는 분 주소를 적어주시면 돼요. 선물용으로는 모양이 고른 특상품을 추천드려요. 포장 관련 요청은 카카오톡으로 문의해 주세요.</p></details>
+<details><summary>교환이나 환불은 되나요?</summary><p>신선식품이라 단순 변심에 의한 교환·환불은 어려운 점 양해 부탁드려요. 받으신 상품에 문제가 있으면 받은 날 사진과 함께 카카오톡으로 알려주시면 확인 후 안내드릴게요.</p></details></div>
 </div>
 <footer><span class="serif" style="color:var(--gold);font-size:15px">정우 스마트팜</span><br>스마트팜 산지직송 참송이버섯<br>[사업자 정보 입력]</footer>
 <div class="sticky"><a href="#" onclick="copyAcct();return false" style="background:#1d211c;color:var(--gold2);border-top:1px solid var(--gold)">계좌 복사</a><a href="#order" style="background:var(--gold);color:#111">주문하기</a></div>
