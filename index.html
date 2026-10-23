@@ -91,7 +91,7 @@ body{padding-bottom:54px}
 <div class="prod"><div><span class="tag">BEST</span><div class="n">특상품 참송이 1kg</div><div class="d">갓이 단단하고 굵은 최상급 · 선물용 추천</div></div><div class="p">32,000원</div></div>
 <div class="prod"><div><div class="n">실속형 참송이 1kg</div><div class="d">맛·향 동일, 모양만 다양 · 가정용 추천</div></div><div class="p">22,000원</div></div></div>
 <div class="card"><h2>참송이, 이렇게 즐기세요</h2><span class="sub">SERVING</span><ul><li>버터구이 · 소금 참기름 구이</li><li>라면·찌개·전골에 결대로 찢어서</li><li>소고기와 함께 구이로</li><li>냉장 보관 후 수확 7일 내 드시면 가장 맛있어요</li></ul></div>
-<div class="card"><h2>주문 방법</h2><span class="sub">HOW TO ORDER</span><ol class="steps"><li>아래 주문서에 상품·수량·배송지를 입력</li><li>신한은행 140-015-691439 (정우시스템)로 입금</li><li>주문서를 복사해 카카오톡으로 보내기</li><li>입금 확인 후 농장에서 바로 발송</li></ol></div>
+<div class="card"><h2>주문 방법</h2><span class="sub">HOW TO ORDER</span><ol class="steps"><li>아래 주문서에 상품·수량·배송지를 입력</li><li>신한은행 140-015-691439 (정우시스템)로 입금</li><li>주문서 보내기 버튼 누르기</li><li>입금 확인 후 농장에서 바로 발송</li></ol></div>
 <div class="card" id="order"><h2>주문하기</h2><span class="sub">ORDER</span>
 <label>상품 선택</label><select id="prod"><option value="특상품 1kg|32000">특상품 1kg — 32,000원</option><option value="실속형 1kg|22000">실속형 1kg — 22,000원</option></select>
 <label>수량</label><select id="qty"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
@@ -102,7 +102,8 @@ body{padding-bottom:54px}
 <div class="total"><span>합계</span><span id="sum">32,000원</span></div>
 <div class="acct" style="margin-top:16px;padding:14px"><div class="bank">무통장입금 · 신한은행 · 예금주 정우시스템</div><div class="no" style="font-size:21px">140-015-691439</div><button class="copy" onclick="copyAcct()">계좌번호 복사</button></div>
 <label class="agree"><input type="checkbox" id="agree"><span>[필수] 개인정보 수집·이용 동의 — 수집항목: 이름, 주소 / 목적: 주문 배송 및 재구매 안내 / 보유기간: 동의 철회 시 또는 수집일로부터 1년</span></label>
-<button class="btn main" onclick="makeOrder()">주문서 만들기</button>
+<button class="btn main" id="sendBtn" onclick="makeOrder()">주문서 보내기</button>
+<div id="okBox" class="acct" style="display:none;margin-top:16px;padding:18px"><div style="font-family:'Noto Serif KR',serif;font-size:18px;color:var(--gold2);margin-bottom:8px">주문이 접수되었습니다</div><div style="font-size:14px;line-height:1.7">아래 계좌로 입금해 주세요<br>신한은행 <b>140-015-691439</b><br>예금주 정우시스템<br>입금액 <b id="okAmt"></b></div><button class="copy" onclick="copyAcct()">계좌번호 복사</button></div>
 <div id="out"></div>
 <button class="btn kakao" id="copyBtn" style="display:none" onclick="copyKakao()">주문서 복사 후 카카오톡으로 보내기</button></div>
 <div class="card"><h2>결제 · 문의</h2><span class="sub">PAYMENT</span>
@@ -133,6 +134,7 @@ body{padding-bottom:54px}
 <footer><span class="serif" style="color:var(--gold);font-size:15px">정우 스마트팜</span><br>스마트팜 산지직송 참송이버섯<br>[사업자 정보 입력]</footer>
 <div class="sticky"><a href="#" onclick="copyAcct();return false" style="background:#1d211c;color:var(--gold2);border-top:1px solid var(--gold)">계좌 복사</a><a href="#order" style="background:var(--gold);color:#111">주문하기</a></div>
 <script>
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwoo7R_XuWoljsf_yA7IvmyRStCyEL7cULgGH579eHGcDYO1NFIPT0Qg3JR4wtI8NGs/exec';
 const $=id=>document.getElementById(id);let msg='';
 function upd(){const[n,p]=$('prod').value.split('|');$('sum').textContent=(p*$('qty').value).toLocaleString()+'원'}
 $('prod').onchange=upd;$('qty').onchange=upd;
@@ -141,6 +143,10 @@ function makeOrder(){const[n,p]=$('prod').value.split('|');const q=$('qty').valu
 if(!$('name').value||!$('addr').value){alert('이름, 주소를 입력해주세요.');return}
 if(!$('agree').checked){alert('개인정보 수집·이용에 동의해주세요.');return}
 msg=`[정우 스마트팜 참송이 주문]\n상품: ${n} x ${q}\n합계: ${(p*q).toLocaleString()}원\n이름: ${$('name').value}\n주소: ${$('addr').value}\n요청: ${$('memo').value||'-'}\n결제: 무통장입금 (신한은행 140-015-691439 정우시스템)`;
-$('out').textContent=msg;$('out').style.display='block';$('copyBtn').style.display='block'}
+const b=$('sendBtn');b.disabled=true;b.textContent='접수 중...';
+const data={name:$('name').value,addr:$('addr').value,product:n,qty:q,amount:p*q,memo:$('memo').value};
+fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)})
+.then(()=>{$('okAmt').textContent=(p*q).toLocaleString()+'원';$('okBox').style.display='block';b.textContent='접수 완료';$('okBox').scrollIntoView({behavior:'smooth',block:'center'})})
+.catch(()=>{b.disabled=false;b.textContent='주문서 보내기';$('out').textContent='접수가 지연되고 있어요. 아래 주문서를 복사해 카카오톡으로 보내주세요.\n\n'+msg;$('out').style.display='block';$('copyBtn').style.display='block'})}
 function copyKakao(){navigator.clipboard.writeText(msg).then(()=>{alert('주문서가 복사됐어요. 카카오톡 채팅창에 붙여넣기 해주세요.');location.href='[카카오톡 채널 링크]'})}
 </script></body></html>
