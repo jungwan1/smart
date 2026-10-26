@@ -234,7 +234,8 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwoo7R_XuWoljsf_y
 const $=id=>document.getElementById(id);let msg='';
 function upd(){const[n,p]=$('prod').value.split('|');$('sum').textContent=(p*$('qty').value).toLocaleString()+'원'}
 $('prod').onchange=upd;$('qty').onchange=upd;
-function copyAcct(){navigator.clipboard.writeText('신한은행 140-015-691439 정우시스템').then(()=>alert('계좌번호가 복사됐어요.\n신한은행 140-015-691439 (예금주 정우시스템)'))}
+function copyTxt(t,ok){function fb(){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px';document.body.appendChild(a);a.focus();a.select();a.setSelectionRange(0,t.length);var r=false;try{r=document.execCommand('copy')}catch(e){}document.body.removeChild(a);if(r)ok();else prompt('아래 내용을 길게 눌러 복사해 주세요.',t)}if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(ok,fb)}else fb()}
+function copyAcct(){copyTxt('신한은행 140-015-691439 정우시스템',()=>alert('계좌번호가 복사됐어요.\n신한은행 140-015-691439 (예금주 정우시스템)'))}
 function makeOrder(){const[n,p]=$('prod').value.split('|');const q=$('qty').value;
 if(!$('name').value||!$('addr').value){alert('이름, 주소를 입력해주세요.');return}
 if(!$('agree').checked){alert('개인정보 수집·이용에 동의해주세요.');return}
