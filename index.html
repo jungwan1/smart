@@ -185,6 +185,7 @@ footer{border-top:0}.fg{color:var(--or)!important;letter-spacing:0}
 <label>상품 선택</label><select id="prod"><option value="특상품 1kg|30000">특상품 1kg — 30,000원</option><option value="실속형 1kg|20000">실속형 1kg — 20,000원</option></select>
 <label>수량</label><select id="qty"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
 <label>이름</label><input id="name" placeholder="홍길동">
+<label>휴대폰 번호</label><input id="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="010-0000-0000">
 
 <label>배송 주소 (상세주소까지)</label><input id="addr" placeholder="예) 경기도 파주시 OO로 00, OO아파트 000동 000호">
 <label>요청사항 (선택)</label><textarea id="memo" rows="2"></textarea>
@@ -237,11 +238,12 @@ $('prod').onchange=upd;$('qty').onchange=upd;
 function copyTxt(t,ok){function fb(){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px';document.body.appendChild(a);a.focus();a.select();a.setSelectionRange(0,t.length);var r=false;try{r=document.execCommand('copy')}catch(e){}document.body.removeChild(a);if(r)ok();else prompt('아래 내용을 길게 눌러 복사해 주세요.',t)}if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(ok,fb)}else fb()}
 function copyAcct(){copyTxt('신한은행 140-016-373133 정우시스템',()=>alert('계좌번호가 복사됐어요.\n신한은행 140-016-373133 (예금주 정우시스템)'))}
 function makeOrder(){const[n,p]=$('prod').value.split('|');const q=$('qty').value;
-if(!$('name').value||!$('addr').value){alert('이름, 주소를 입력해주세요.');return}
+if(!$('name').value||!$('phone').value||!$('addr').value){alert('이름, 휴대폰 번호, 주소를 입력해주세요.');return}
+if($('phone').value.replace(/[^0-9]/g,'').length<10){alert('휴대폰 번호를 정확히 입력해주세요.');return}
 if(!$('agree').checked){alert('개인정보 수집·이용에 동의해주세요.');return}
-msg=`[정우참송이팜 참송이 주문]\n상품: ${n} x ${q}\n합계: ${(p*q).toLocaleString()}원\n이름: ${$('name').value}\n주소: ${$('addr').value}\n요청: ${$('memo').value||'-'}\n결제: 무통장입금 (신한은행 140-016-373133 정우시스템)`;
+msg=`[정우참송이팜 참송이 주문]\n상품: ${n} x ${q}\n합계: ${(p*q).toLocaleString()}원\n이름: ${$('name').value}\n연락처: ${$('phone').value}\n주소: ${$('addr').value}\n요청: ${$('memo').value||'-'}\n결제: 무통장입금 (신한은행 140-016-373133 정우시스템)`;
 const b=$('sendBtn');b.disabled=true;b.textContent='접수 중...';
-const oid=makeId();const data={id:oid,name:$('name').value,addr:$('addr').value,product:n,qty:q,amount:p*q,memo:$('memo').value};
+const oid=makeId();const data={id:oid,name:$('name').value,addr:$('addr').value+' / ☎ '+$('phone').value,phone:$('phone').value,product:n,qty:q,amount:p*q,memo:$('memo').value};
 fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)})
 .then(()=>{$('okAmt').textContent=(p*q).toLocaleString()+'원';$('okId').textContent=oid;saveLast({id:oid,name:data.name,amount:p*q,paid:false});$('paidBtn').style.display='';$('paidMsg').style.display='none';$('pendBar').style.display='none';$('okBox').style.display='block';b.textContent='접수 완료';$('okBox').scrollIntoView({behavior:'smooth',block:'center'})})
 .catch(()=>{b.disabled=false;b.textContent='주문서 보내기';$('out').textContent='접수가 지연되고 있어요. 아래 주문서를 복사해 카카오톡으로 보내주세요.\n\n'+msg;$('out').style.display='block';$('copyBtn').style.display='block'})}
